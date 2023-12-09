@@ -481,23 +481,8 @@ end
 --  define the property 'filetypes' to the map in question.
 local servers = {
   clangd = {},
-  --   cmd = {
-  --     'clangd',
-  --     '--background-index',
-  --     '--clang-tidy',
-  --     '--header-insertion=iwyu',
-  --     '--completion-style=detailed',
-  --     '--function-arg-placeholders',
-  --   },
-  --   init_options = {
-  --     usePlaceholders = true,
-  --     completeUnimported = true,
-  --     clangdFileStatus = true,
-  --     semanticHighlighting = true,
-  --   },
-  -- },
   -- gopls = {},
-  -- pyright = {},
+  pyright = {},
   -- rust_analyzer = {},
   -- tsserver = {},
   -- html = { filetypes = { 'html', 'twig', 'hbs'} },
@@ -573,7 +558,7 @@ require('lspconfig').gdscript.setup {
 --   flags = { debounce_text_changes = 150 },
 -- }
 
-require('ufo').setup {}
+require('ufo').setup()
 
 -- [[ Configure nvim-cmp ]]
 -- See `:help cmp`
