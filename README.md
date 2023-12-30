@@ -12,6 +12,7 @@ Some more plugins include:
 - *Oil.nvim* for a better file managing experience
 
 Go support [kickstart.nvim](https://github.com/nvim-lua/kickstart.nvim)!
+
 With the help of [typecraft](https://www.youtube.com/playlist?list=PLsz00TDipIffreIaUNk64KxTIkQaGguqn) videos.
 
 ______________________________________________________________________
