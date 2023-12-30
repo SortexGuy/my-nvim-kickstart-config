@@ -1,4 +1,4 @@
-local M = {
+return {
 	'kevinhwang91/nvim-ufo',
 	dependencies = { 'kevinhwang91/promise-async' },
 	opts = {
@@ -21,5 +21,3 @@ local M = {
 		require('ufo').setup(opts)
 	end,
 }
-
-return M
