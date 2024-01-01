@@ -152,7 +152,16 @@ require('mason-lspconfig').setup()
 --  If you want to override the default filetypes that your language server will attach to you can
 --  define the property 'filetypes' to the map in question.
 local servers = {
-  clangd = {},
+  clangd = {
+    cmd = { 'clangd', (function() -- Function to provide the driver arg to clangd in Windows
+      if jit.os == 'Windows' and vim.fn.executable('c++') then
+        local driver = vim.fn.exepath('c++.exe')
+        return '--query-driver=' .. driver
+      else
+        return ''
+      end
+    end)() },
+  },
   pyright = {},
   tsserver = {},
   html = { filetypes = { 'html', 'twig', 'hbs' } },
@@ -244,19 +253,17 @@ mason_lspconfig.setup_handlers {
     require('lspconfig')[server_name].setup {
       capabilities = capabilities,
       on_attach = on_attach,
+      -- ___ clangd optional on_attach ___
+      -- on_attach = function(client, bufnr)
+      --   client.server_capabilities.signatureHelpProvider = false
+      --   on_attach(client, bufnr)
+      -- end,
       settings = servers[server_name],
       filetypes = (servers[server_name] or {}).filetypes,
+      cmd = servers[server_name].cmd or { server_name },
     }
   end,
 }
-
--- require('lspconfig').clangd.setup {
---   on_attach = function(client, bufnr)
---     client.server_capabilities.signatureHelpProvider = false
---     on_attach(client, bufnr)
---   end,
---   capabilities = capabilities,
--- }
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
