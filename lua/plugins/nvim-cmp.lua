@@ -21,16 +21,25 @@ return {
     require('luasnip.loaders.from_vscode').lazy_load()
     luasnip.config.setup {}
 
+    -- Not use borders for Windows users (causes problems with LSP hover)
+    local cmp_window = function()
+      if jit.os ~= 'Windows' then
+        return {
+          completion = cmp.config.window.bordered(),
+          documentation = cmp.config.window.bordered(),
+        }
+      else
+        return {}
+      end
+    end
+
     cmp.setup {
       snippet = {
         expand = function(args)
           luasnip.lsp_expand(args.body)
         end,
       },
-      window = {
-        completion = cmp.config.window.bordered(),
-        documentation = cmp.config.window.bordered(),
-      },
+      window = cmp_window(),
       completion = {
         completeopt = 'menu,menuone,noinsert',
       },

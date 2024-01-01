@@ -34,6 +34,12 @@ require 'custom.theme'
 -- See `:help vim.o`
 -- NOTE: You can change these options as you wish!
 
+if jit.os == 'Windows' and vim.fn.executable('pwsh') then
+  vim.o.shell = 'pwsh'
+  vim.o.shellcmdflag =
+  '-NoLogo -NoProfile -ExecutionPolicy Bypass -Command [Console]::InputEncoding=[Console]::OutputEncoding=[System.Text.Encoding]::UTF8;'
+end
+
 -- Set highlight on search
 vim.o.hlsearch = true
 
