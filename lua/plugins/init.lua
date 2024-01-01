@@ -47,4 +47,5 @@ return {
     end,
   },
   'ThePrimeagen/vim-be-good',
+  require 'plugins.markdown-flow',
 }
