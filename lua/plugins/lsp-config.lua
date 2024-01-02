@@ -32,10 +32,10 @@ return {
 
       -- Function to provide the driver arg to clangd in Windows
       local function get_clangd_driver_for_windows()
-        if jit.os ~= 'Windows' or not vim.fn.executable('c++') then
+        if jit.os ~= 'Windows' or not vim.fn.executable 'c++' then
           return ''
         end
-        return '--query-driver=' .. vim.fn.exepath('c++.exe')
+        return '--query-driver=' .. vim.fn.exepath 'c++.exe'
       end
 
       local servers = {
@@ -89,7 +89,11 @@ return {
         nmap('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
 
         nmap('gd', vim.lsp.buf.definition, '[G]oto [D]efinition')
-        nmap('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
+        nmap(
+          'gr',
+          require('telescope.builtin').lsp_references,
+          '[G]oto [R]eferences'
+        )
         nmap('gI', vim.lsp.buf.implementation, '[G]oto [I]mplementation')
         nmap('<leader>D', vim.lsp.buf.type_definition, 'Type [D]efinition')
         nmap(
@@ -109,8 +113,16 @@ return {
 
         -- Lesser used LSP functionality
         nmap('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
-        nmap('<leader>wa', vim.lsp.buf.add_workspace_folder, '[W]orkspace [A]dd Folder')
-        nmap('<leader>wr', vim.lsp.buf.remove_workspace_folder, '[W]orkspace [R]emove Folder')
+        nmap(
+          '<leader>wa',
+          vim.lsp.buf.add_workspace_folder,
+          '[W]orkspace [A]dd Folder'
+        )
+        nmap(
+          '<leader>wr',
+          vim.lsp.buf.remove_workspace_folder,
+          '[W]orkspace [R]emove Folder'
+        )
         nmap('<leader>wl', function()
           print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
         end, '[W]orkspace [L]ist Folders')
@@ -128,7 +140,8 @@ return {
 
       mason_lspconfig.setup_handlers {
         function(server_name)
-          require('lspconfig')[server_name].setup {
+          local server = require('lspconfig')[server_name]
+          server.setup {
             capabilities = capabilities,
             on_attach = on_attach,
             -- ___ clangd optional on_attach ___
@@ -138,7 +151,7 @@ return {
             -- end,
             settings = servers[server_name],
             filetypes = (servers[server_name] or {}).filetypes,
-            cmd = servers[server_name].cmd or { server_name },
+            cmd = (servers[server_name] or {}).cmd or server.cmd,
           }
         end,
       }
