@@ -138,7 +138,7 @@ return {
             -- end,
             settings = servers[server_name],
             filetypes = (servers[server_name] or {}).filetypes,
-            cmd = servers[server_name].cmd or { server_name },
+            -- cmd = servers[server_name].cmd or { server_name },
           }
         end,
       }
