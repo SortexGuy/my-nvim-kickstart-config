@@ -48,4 +48,5 @@ return {
   },
   'ThePrimeagen/vim-be-good',
   require 'plugins.markdown-flow',
+  require 'plugins.laravel',
 }
