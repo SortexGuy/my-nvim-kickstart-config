@@ -51,4 +51,6 @@ return {
       require('refactoring').setup {}
     end,
   },
+  require 'plugins.markdown-flow',
+  require 'plugins.laravel',
 }
