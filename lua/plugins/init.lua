@@ -48,4 +48,6 @@ return {
   },
   'ThePrimeagen/vim-be-good',
   require 'plugins.markdown-flow',
+  require 'plugins.dc-precense',
+  require 'plugins.tmux-nav',
 }
