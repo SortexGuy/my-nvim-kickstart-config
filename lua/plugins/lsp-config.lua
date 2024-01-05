@@ -220,14 +220,24 @@ return {
         end,
       })
 
-      -- require('jdtls').start_or_attach {
-      --   cmd = { vim.fn.expand '~/.local/share/nvim/mason/bin/jdtls' },
-      --   root_dir = require('jdtls.setup').find_root {
-      --     'pom.xml',
-      --     '.git',
-      --     'build.gradle',
-      --   },
-      -- }
+      -- Astro config
+      require('lspconfig').astro.setup {
+        capabilities = capabilities,
+        on_attach = on_attach,
+        -- ___ clangd optional on_attach ___
+        -- on_attach = function(client, bufnr)
+        --   client.server_capabilities.signatureHelpProvider = false
+        --   on_attach(client, bufnr)
+        -- end,
+        -- settings = servers[server_name],
+        filetypes = { 'astro' },
+        cmd = { 'astro-ls', '--stdio' },
+        root_dir = require('lspconfig.util').root_pattern(
+          'package.json',
+          'astro.config.mjs',
+          '.git'
+        ),
+      }
     end,
   },
 }
