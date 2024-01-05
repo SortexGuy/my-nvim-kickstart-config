@@ -155,6 +155,25 @@ return {
           }
         end,
       }
+
+      -- Astro config
+      require('lspconfig').astro.setup {
+        capabilities = capabilities,
+        on_attach = on_attach,
+        -- ___ clangd optional on_attach ___
+        -- on_attach = function(client, bufnr)
+        --   client.server_capabilities.signatureHelpProvider = false
+        --   on_attach(client, bufnr)
+        -- end,
+        -- settings = servers[server_name],
+        filetypes = { 'astro' },
+        cmd = { 'astro-ls', '--stdio' },
+        root_dir = require('lspconfig.util').root_pattern(
+          'package.json',
+          'astro.config.mjs',
+          '.git'
+        ),
+      }
     end,
   },
   {
