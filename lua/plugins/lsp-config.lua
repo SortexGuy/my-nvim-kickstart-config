@@ -2,33 +2,23 @@ return {
   -- NOTE: This is where your plugins related to LSP can be installed.
   --  The configuration is done below. Search for lspconfig to find it below.
   {
-    'williamboman/mason.nvim',
-    priority = 100,
+    -- LSP Configuration & Plugins
+    'neovim/nvim-lspconfig',
     lazy = false,
-  },
-  {
-    'williamboman/mason-lspconfig.nvim',
-    priority = 90,
-    lazy = false,
-    opts = {
-      auto_install = true,
+    dependencies = {
+      { 'williamboman/mason.nvim', lazy = false },
+      {
+        'williamboman/mason-lspconfig.nvim',
+        lazy = false,
+        opts = { auto_install = true },
+      },
+      { 'j-hui/fidget.nvim', opts = {} },
+      'folke/neodev.nvim',
     },
     config = function(_, opts)
-      -- [[ Configure LSP ]]
-      -- mason-lspconfig requires that these setup functions are called in this order
-      -- before setting up the servers.
       require('mason').setup()
       local mason_lspconfig = require 'mason-lspconfig'
       mason_lspconfig.setup(opts)
-
-      -- Enable the following language servers
-      --  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
-      --
-      --  Add any additional override configuration in the following tables. They will be passed to
-      --  the `settings` field of the server config. You must look up that documentation yourself.
-      --
-      --  If you want to override the default filetypes that your language server will attach to you can
-      --  define the property 'filetypes' to the map in question.
 
       -- Function to provide the driver arg to clangd in Windows
       local function get_clangd_driver_for_windows()
@@ -51,7 +41,6 @@ return {
           Lua = {
             workspace = { checkThirdParty = false },
             telemetry = { enable = false },
-            -- NOTE: toggle below to ignore Lua_LS's noisy `missing
             diagnostics = { disable = { 'missing-fields' } },
           },
         },
@@ -71,12 +60,6 @@ return {
 
       --  This function gets run when an LSP connects to a particular buffer.
       local on_attach = function(_, bufnr)
-        -- NOTE: Remember that lua is a real programming language, and as such it is possible
-        -- to define small helper and utility functions so you don't have to repeat yourself
-        -- many times.
-        --
-        -- In this case, we create a function that lets us more easily define mappings specific
-        -- for LSP related items. It sets the mode, buffer and description for us each time.
         local nmap = function(keys, func, desc)
           if desc then
             desc = 'LSP: ' .. desc
@@ -87,7 +70,6 @@ return {
 
         nmap('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
         nmap('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
-
         nmap('gd', vim.lsp.buf.definition, '[G]oto [D]efinition')
         nmap(
           'gr',
@@ -144,11 +126,6 @@ return {
           server.setup {
             capabilities = capabilities,
             on_attach = on_attach,
-            -- ___ clangd optional on_attach ___
-            -- on_attach = function(client, bufnr)
-            --   client.server_capabilities.signatureHelpProvider = false
-            --   on_attach(client, bufnr)
-            -- end,
             settings = servers[server_name],
             filetypes = (servers[server_name] or {}).filetypes,
             cmd = (servers[server_name] or {}).cmd or server.cmd,
@@ -156,19 +133,5 @@ return {
         end,
       }
     end,
-  },
-  {
-    -- LSP Configuration & Plugins
-    'neovim/nvim-lspconfig',
-    priority = 100,
-    lazy = false,
-    dependencies = {
-      -- Useful status updates for LSP
-      -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
-      { 'j-hui/fidget.nvim', opts = {} },
-
-      -- Additional lua configuration, makes nvim stuff amazing!
-      'folke/neodev.nvim',
-    },
   },
 }

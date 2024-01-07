@@ -17,7 +17,7 @@ return {
     }
 
     require('mason-null-ls').setup {
-      ensure_installed = nil,
+      ensure_installed = {},
       automatic_installation = true,
     }
   end,

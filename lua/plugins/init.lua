@@ -1,12 +1,9 @@
 return {
-  require 'plugins.misc-first',
-  require 'plugins.lsp-config',
-  -- require 'plugins.nvim-dap',
-  require 'plugins.none-ls',
-  require 'plugins.nvim-cmp',
-  require 'plugins.which-key',
-  require 'plugins.gitsigns',
-  require 'plugins.themes',
+  -- Git related plugins
+  'tpope/vim-fugitive',
+  'tpope/vim-rhubarb',
+  -- Detect tabstop and shiftwidth automatically
+  'tpope/vim-sleuth',
   {
     -- Set lualine as statusline
     'nvim-lualine/lualine.nvim',
@@ -33,9 +30,6 @@ return {
   },
   -- "gc" to comment visual regions/lines
   { 'numToStr/Comment.nvim', opts = {} },
-  require 'plugins.telescope',
-  require 'plugins.treesitter',
-  require 'plugins.oil',
   {
     'Exafunction/codeium.nvim',
     dependencies = {
@@ -47,7 +41,14 @@ return {
     end,
   },
   'ThePrimeagen/vim-be-good',
-  require 'plugins.markdown-flow',
-  require 'plugins.dc-precense',
-  require 'plugins.tmux-nav',
+  {
+    'ThePrimeagen/refactoring.nvim',
+    dependencies = {
+      'nvim-lua/plenary.nvim',
+      'nvim-treesitter/nvim-treesitter',
+    },
+    config = function()
+      require('refactoring').setup {}
+    end,
+  },
 }
