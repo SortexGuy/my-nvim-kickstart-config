@@ -51,4 +51,8 @@ return {
       require('refactoring').setup {}
     end,
   },
+  require 'plugins.markdown-flow',
+  require 'plugins.dc-precense',
+  require 'plugins.tmux-nav',
+  require 'plugins.astro-dev',
 }
