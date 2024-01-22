@@ -14,8 +14,10 @@ return {
       },
       { 'j-hui/fidget.nvim', opts = {} },
       'folke/neodev.nvim',
+      -- 'mfussenegger/nvim-jdtls',
     },
     config = function(_, opts)
+      vim.lsp.set_log_level 'debug'
       require('mason').setup()
       local mason_lspconfig = require 'mason-lspconfig'
       mason_lspconfig.setup(opts)
@@ -30,7 +32,7 @@ return {
 
       local servers = {
         clangd = {
-          cmd = { 'clangd', get_clangd_driver_for_windows() },
+          -- cmd = { 'clangd', get_clangd_driver_for_windows() },
         },
         pyright = {},
         tsserver = {},
@@ -217,6 +219,15 @@ return {
           })
         end,
       })
+
+      -- require('jdtls').start_or_attach {
+      --   cmd = { vim.fn.expand '~/.local/share/nvim/mason/bin/jdtls' },
+      --   root_dir = require('jdtls.setup').find_root {
+      --     'pom.xml',
+      --     '.git',
+      --     'build.gradle',
+      --   },
+      -- }
     end,
   },
 }

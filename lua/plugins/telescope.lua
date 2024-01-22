@@ -17,15 +17,29 @@ return {
           return vim.fn.executable 'make' == 1
         end,
       },
+      'debugloop/telescope-undo.nvim',
+    },
+    keys = {
+      { -- lazy style key map
+        '<leader>u',
+        '<cmd>Telescope undo<cr>',
+        desc = 'Telescope: undo history',
+      },
     },
     opts = {
       defaults = {
+        -- layout_config = {
+        --   vertical = { width = 0.5 },
+        -- },
         mappings = {
           i = {
             ['<C-u>'] = false,
             ['<C-d>'] = false,
           },
         },
+      },
+      extensions = {
+        undo = {},
       },
     },
     config = function(_, opts)
@@ -36,6 +50,7 @@ return {
       -- Enable telescope fzf native, if installed
       pcall(require('telescope').load_extension, 'fzf')
       pcall(require('telescope').load_extension, 'harpoon')
+      pcall(require('telescope').load_extension, 'undo')
 
       -- Telescope live_grep in git root
       -- Function to find the git root directory based on the current buffer's path
@@ -54,7 +69,9 @@ return {
 
         -- Find the Git root directory from the current file's path
         local git_root = vim.fn.systemlist(
-          'git -C ' .. vim.fn.escape(current_dir, ' ') .. ' rev-parse --show-toplevel'
+          'git -C '
+            .. vim.fn.escape(current_dir, ' ')
+            .. ' rev-parse --show-toplevel'
         )[1]
         if vim.v.shell_error ~= 0 then
           print 'Not a git repository. Searching on current working directory'
@@ -73,7 +90,11 @@ return {
         end
       end
 
-      vim.api.nvim_create_user_command('LiveGrepGitRoot', live_grep_git_root, {})
+      vim.api.nvim_create_user_command(
+        'LiveGrepGitRoot',
+        live_grep_git_root,
+        {}
+      )
 
       -- See `:help telescope.builtin`
       vim.keymap.set(
