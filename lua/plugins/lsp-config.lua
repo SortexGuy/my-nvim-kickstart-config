@@ -14,13 +14,21 @@ return {
       },
       { 'j-hui/fidget.nvim', opts = {} },
       'folke/neodev.nvim',
-      -- 'mfussenegger/nvim-jdtls',
+      'nvim-java/nvim-java',
     },
     config = function(_, opts)
       vim.lsp.set_log_level 'debug'
-      require('mason').setup()
+      require('mason').setup {
+        registries = {
+          'github:nvim-java/mason-registry',
+          'github:mason-org/mason-registry',
+        },
+      }
+      require('java').setup()
       local mason_lspconfig = require 'mason-lspconfig'
-      mason_lspconfig.setup(opts)
+      mason_lspconfig.setup {
+        auto_install = true,
+      }
 
       -- Function to provide the driver arg to clangd in Windows
       local function get_clangd_driver_for_windows()
