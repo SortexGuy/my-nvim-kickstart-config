@@ -6,65 +6,60 @@ return {
     priority = 1000,
     opts = {
       flavour = 'mocha',
-      background = {
-        light = 'frappe',
-        dark = 'mocha',
-      },
+      background = { light = 'frappe', dark = 'mocha' },
       transparent_background = true,
       show_end_od_buffer = true,
       term_colors = true,
     },
   },
   {
-    'loctvl842/monokai-pro.nvim',
-    name = 'monokai-pro',
+    'ellisonleao/gruvbox.nvim',
+    name = 'gruvbox',
     priority = 1000,
+    config = true,
     opts = {
-      transparent_background = true,
-      terminal_colors = true,
-      devicons = true, -- highlight the icons of `nvim-web-devicons`
-      styles = {
-        comment = { italic = true },
-        keyword = { italic = true }, -- any other keyword
-        type = { italic = true }, -- (preferred) int, long, char, etc
-        -- storageclass = { italic = true },  -- static, register, volatile, etc
-        -- structure = { italic = true },     -- struct, union, enum, etc
-        -- parameter = { italic = true },     -- parameter pass in function
-        annotation = { italic = true },
-        tag_attribute = { italic = true }, -- attribute of tag in reactjs
+      terminal_colors = true, -- add neovim terminal colors
+      undercurl = true,
+      underline = true,
+      bold = true,
+      italic = {
+        strings = true,
+        emphasis = true,
+        comments = true,
+        operators = false,
+        folds = true,
       },
-      filter = 'spectrum', -- classic | octagon | pro | machine | ristretto | spectrum
-      -- inc_search = "background",           -- underline | background
-      background_clear = {
-        'telescope',
-      },
-      plugins = {
-        bufferline = {
-          underline_selected = false,
-          underline_visible = false,
-        },
-        indent_blankline = {
-          context_highlight = 'pro', -- default | pro
-          context_start_underline = true,
-        },
-      },
+      strikethrough = true,
+      invert_selection = false,
+      contrast = '', -- can be "hard", "soft" or empty string
+      transparent_mode = true,
     },
   },
   {
-    'rafamadriz/neon',
-    name = 'neon',
-    -- opts = {
-    --   neon_style = 'dark',
-    -- },
-    config = function(_, opts)
-      -- require('neon').setup(opts)
-
-      vim.g.neon_style = 'doom'
-      vim.g.neon_italic_keyword = true
-      vim.g.neon_transparent = true
-      -- vim.g.neon_italic_function = true
+    'luisiacc/gruvbox-baby',
+    name = 'gruvbox-baby',
+    branch = 'main',
+    config = function()
+      vim.g.gruvbox_baby_string_style = 'italic'
+      vim.g.gruvbox_baby_telescope_theme = true
+      vim.g.gruvbox_baby_transparent_mode = true
     end,
   },
+  {
+    'rebelot/kanagawa.nvim',
+    name = 'kanagawa',
+    opts = {
+      undercurl = true, -- enable undercurls
+      commentStyle = { italic = true },
+      functionStyle = {},
+      keywordStyle = { italic = true },
+      statementStyle = { bold = true },
+      typeStyle = {},
+      transparent = true, -- do not set background color
+      terminalColors = true, -- define vim.g.terminal_color_{0,17}
+    },
+  },
+  { 'savq/melange-nvim', name = 'melange' },
 
   -- Themes
   {
@@ -76,8 +71,14 @@ return {
       themeConfigFile = '~/.config/nvim/lua/custom/theme.lua',
       themes = {
         { name = 'Catppuccin Mocha', colorscheme = 'catppuccin' },
-        { name = 'Monokai Pro', colorscheme = 'monokai-pro' },
-        { name = 'Neon Dark', colorscheme = 'neon' },
+        { name = 'Gruvbox', colorscheme = 'gruvbox' },
+        { name = 'Gruvbox Baby', colorscheme = 'gruvbox-baby' },
+        { name = 'Kanagawa Wave', colorscheme = 'kanagawa-wave' },
+        { name = 'Kanagawa Dragon', colorscheme = 'kanagawa-dragon' },
+        { name = 'Kanagawa Lotus', colorscheme = 'kanagawa-lotus' },
+        { name = 'Melange', colorscheme = 'melange' },
+        -- { name = 'Monokai Pro', colorscheme = 'monokai-pro' },
+        -- { name = 'Neon Dark', colorscheme = 'neon' },
       },
     },
   },
