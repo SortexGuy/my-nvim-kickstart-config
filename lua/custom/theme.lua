@@ -1,5 +1,5 @@
 -- Themery block
 -- This block will be replaced by Themery.
-vim.cmd 'colorscheme monokai-pro'
-vim.g.theme_id = 2
+vim.cmd("colorscheme kanagawa-wave")
+vim.g.theme_id = 4
 -- end themery block
