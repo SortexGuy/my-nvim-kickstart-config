@@ -2,45 +2,37 @@ return {
   -- NOTE: This is where your plugins related to LSP can be installed.
   --  The configuration is done below. Search for lspconfig to find it below.
   {
-    'williamboman/mason.nvim',
-    priority = 100,
+    -- LSP Configuration & Plugins
+    'neovim/nvim-lspconfig',
     lazy = false,
-  },
-  {
-    'williamboman/mason-lspconfig.nvim',
-    priority = 90,
-    lazy = false,
-    opts = {
-      auto_install = true,
+    dependencies = {
+      { 'williamboman/mason.nvim', lazy = false },
+      {
+        'williamboman/mason-lspconfig.nvim',
+        lazy = false,
+        opts = { auto_install = true },
+      },
+      { 'j-hui/fidget.nvim', opts = {} },
+      'folke/neodev.nvim',
+      -- 'mfussenegger/nvim-jdtls',
     },
     config = function(_, opts)
-      -- [[ Configure LSP ]]
-      -- mason-lspconfig requires that these setup functions are called in this order
-      -- before setting up the servers.
+      vim.lsp.set_log_level 'debug'
       require('mason').setup()
       local mason_lspconfig = require 'mason-lspconfig'
       mason_lspconfig.setup(opts)
 
-      -- Enable the following language servers
-      --  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
-      --
-      --  Add any additional override configuration in the following tables. They will be passed to
-      --  the `settings` field of the server config. You must look up that documentation yourself.
-      --
-      --  If you want to override the default filetypes that your language server will attach to you can
-      --  define the property 'filetypes' to the map in question.
-
       -- Function to provide the driver arg to clangd in Windows
       local function get_clangd_driver_for_windows()
-        if jit.os ~= 'Windows' or not vim.fn.executable('c++') then
+        if jit.os ~= 'Windows' or not vim.fn.executable 'c++' then
           return ''
         end
-        return '--query-driver=' .. vim.fn.exepath('c++.exe')
+        return '--query-driver=' .. vim.fn.exepath 'c++.exe'
       end
 
       local servers = {
         clangd = {
-          cmd = { 'clangd', get_clangd_driver_for_windows() },
+          -- cmd = { 'clangd', get_clangd_driver_for_windows() },
         },
         pyright = {},
         tsserver = {},
@@ -49,10 +41,23 @@ return {
 
         lua_ls = {
           Lua = {
-            workspace = { checkThirdParty = false },
+            workspace = {
+              library = {
+                '/usr/share/nvim/runtime/lua',
+                '/usr/share/nvim/runtime/lua/lsp',
+                '/usr/share/awesome/lib',
+                '/usr/share/lua/5.4',
+              },
+              -- checkThirdParty = true,
+            },
+            completion = {
+              enable = true,
+            },
             telemetry = { enable = false },
-            -- NOTE: toggle below to ignore Lua_LS's noisy `missing
-            diagnostics = { disable = { 'missing-fields' } },
+            diagnostics = {
+              globals = { 'vim', 'awesome', 'client', 'root' },
+              disable = { 'missing-fields' },
+            },
           },
         },
       }
@@ -71,12 +76,6 @@ return {
 
       --  This function gets run when an LSP connects to a particular buffer.
       local on_attach = function(_, bufnr)
-        -- NOTE: Remember that lua is a real programming language, and as such it is possible
-        -- to define small helper and utility functions so you don't have to repeat yourself
-        -- many times.
-        --
-        -- In this case, we create a function that lets us more easily define mappings specific
-        -- for LSP related items. It sets the mode, buffer and description for us each time.
         local nmap = function(keys, func, desc)
           if desc then
             desc = 'LSP: ' .. desc
@@ -87,9 +86,12 @@ return {
 
         nmap('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
         nmap('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
-
         nmap('gd', vim.lsp.buf.definition, '[G]oto [D]efinition')
-        nmap('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
+        nmap(
+          'gr',
+          require('telescope.builtin').lsp_references,
+          '[G]oto [R]eferences'
+        )
         nmap('gI', vim.lsp.buf.implementation, '[G]oto [I]mplementation')
         nmap('<leader>D', vim.lsp.buf.type_definition, 'Type [D]efinition')
         nmap(
@@ -109,8 +111,16 @@ return {
 
         -- Lesser used LSP functionality
         nmap('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
-        nmap('<leader>wa', vim.lsp.buf.add_workspace_folder, '[W]orkspace [A]dd Folder')
-        nmap('<leader>wr', vim.lsp.buf.remove_workspace_folder, '[W]orkspace [R]emove Folder')
+        nmap(
+          '<leader>wa',
+          vim.lsp.buf.add_workspace_folder,
+          '[W]orkspace [A]dd Folder'
+        )
+        nmap(
+          '<leader>wr',
+          vim.lsp.buf.remove_workspace_folder,
+          '[W]orkspace [R]emove Folder'
+        )
         nmap('<leader>wl', function()
           print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
         end, '[W]orkspace [L]ist Folders')
@@ -128,34 +138,96 @@ return {
 
       mason_lspconfig.setup_handlers {
         function(server_name)
-          require('lspconfig')[server_name].setup {
+          local server = require('lspconfig')[server_name]
+          server.setup {
             capabilities = capabilities,
             on_attach = on_attach,
-            -- ___ clangd optional on_attach ___
-            -- on_attach = function(client, bufnr)
-            --   client.server_capabilities.signatureHelpProvider = false
-            --   on_attach(client, bufnr)
-            -- end,
             settings = servers[server_name],
             filetypes = (servers[server_name] or {}).filetypes,
             -- cmd = servers[server_name].cmd or { server_name },
           }
         end,
       }
-    end,
-  },
-  {
-    -- LSP Configuration & Plugins
-    'neovim/nvim-lspconfig',
-    priority = 100,
-    lazy = false,
-    dependencies = {
-      -- Useful status updates for LSP
-      -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
-      { 'j-hui/fidget.nvim', opts = {} },
 
-      -- Additional lua configuration, makes nvim stuff amazing!
-      'folke/neodev.nvim',
-    },
+      --- Autoformatting setup
+      -- Switch for controlling whether you want autoformatting.
+      --  Use :KickstartFormatToggle to toggle autoformatting on or off
+      local format_is_enabled = true
+      vim.api.nvim_create_user_command('KickstartFormatToggle', function()
+        format_is_enabled = not format_is_enabled
+        print('Setting autoformatting to: ' .. tostring(format_is_enabled))
+      end, {})
+
+      -- Create an augroup that is used for managing our formatting autocmds.
+      --      We need one augroup per client to make sure that multiple clients
+      --      can attach to the same buffer without interfering with each other.
+      local _augroups = {}
+      local get_augroup = function(client)
+        if not _augroups[client.id] then
+          local group_name = 'kickstart-lsp-format-' .. client.name
+          local id = vim.api.nvim_create_augroup(group_name, { clear = true })
+          _augroups[client.id] = id
+        end
+
+        return _augroups[client.id]
+      end
+
+      -- Whenever an LSP attaches to a buffer, we will run this function.
+      --
+      -- See `:help LspAttach` for more information about this autocmd event.
+      vim.api.nvim_create_autocmd('LspAttach', {
+        group = vim.api.nvim_create_augroup(
+          'kickstart-lsp-attach-format',
+          { clear = true }
+        ),
+        -- This is where we attach the autoformatting for reasonable clients
+        callback = function(args)
+          local client_id = args.data.client_id
+          local client = vim.lsp.get_client_by_id(client_id)
+          local bufnr = args.buf
+
+          -- Only attach to clients that support document formatting
+          if not client.server_capabilities.documentFormattingProvider then
+            return
+          end
+
+          -- Tsserver usually works poorly. Sorry you work with bad languages
+          -- You can remove this line if you know what you're doing :)
+          if client.name == 'tsserver' then
+            return
+          elseif client.name == 'lua_ls' then
+            return
+          end
+
+          -- Create an autocmd that will run *before* we save the buffer.
+          --  Run the formatting command for the LSP that has just attached.
+          vim.api.nvim_create_autocmd('BufWritePre', {
+            group = get_augroup(client),
+            buffer = bufnr,
+            callback = function()
+              if not format_is_enabled then
+                return
+              end
+
+              vim.lsp.buf.format {
+                async = false,
+                filter = function(c)
+                  return c.id == client.id
+                end,
+              }
+            end,
+          })
+        end,
+      })
+
+      -- require('jdtls').start_or_attach {
+      --   cmd = { vim.fn.expand '~/.local/share/nvim/mason/bin/jdtls' },
+      --   root_dir = require('jdtls.setup').find_root {
+      --     'pom.xml',
+      --     '.git',
+      --     'build.gradle',
+      --   },
+      -- }
+    end,
   },
 }

@@ -10,7 +10,7 @@ return {
         light = 'frappe',
         dark = 'mocha',
       },
-      transparent_background = false,
+      transparent_background = true,
       show_end_od_buffer = true,
       term_colors = true,
     },
@@ -20,7 +20,7 @@ return {
     name = 'monokai-pro',
     priority = 1000,
     opts = {
-      transparent_background = false,
+      transparent_background = true,
       terminal_colors = true,
       devicons = true, -- highlight the icons of `nvim-web-devicons`
       styles = {
@@ -50,6 +50,21 @@ return {
       },
     },
   },
+  {
+    'rafamadriz/neon',
+    name = 'neon',
+    -- opts = {
+    --   neon_style = 'dark',
+    -- },
+    config = function(_, opts)
+      -- require('neon').setup(opts)
+
+      vim.g.neon_style = 'doom'
+      vim.g.neon_italic_keyword = true
+      vim.g.neon_transparent = true
+      -- vim.g.neon_italic_function = true
+    end,
+  },
 
   -- Themes
   {
@@ -62,6 +77,7 @@ return {
       themes = {
         { name = 'Catppuccin Mocha', colorscheme = 'catppuccin' },
         { name = 'Monokai Pro', colorscheme = 'monokai-pro' },
+        { name = 'Neon Dark', colorscheme = 'neon' },
       },
     },
   },

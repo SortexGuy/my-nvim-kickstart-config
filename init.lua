@@ -21,12 +21,7 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 -- Setting up plugins
-require('lazy').setup({
-  require 'plugins',
-  require 'kickstart.plugins.autoformat',
-  require 'kickstart.plugins.debug',
-  { import = 'custom.plugins' },
-}, {})
+require('lazy').setup 'plugins'
 
 require 'custom.theme'
 
@@ -34,10 +29,10 @@ require 'custom.theme'
 -- See `:help vim.o`
 -- NOTE: You can change these options as you wish!
 
-if jit.os == 'Windows' and vim.fn.executable('pwsh') then
+if jit.os == 'Windows' and vim.fn.executable 'pwsh' then
   vim.o.shell = 'pwsh'
   vim.o.shellcmdflag =
-  '-NoLogo -NoProfile -ExecutionPolicy Bypass -Command [Console]::InputEncoding=[Console]::OutputEncoding=[System.Text.Encoding]::UTF8;'
+    '-NoLogo -NoProfile -ExecutionPolicy Bypass -Command [Console]::InputEncoding=[Console]::OutputEncoding=[System.Text.Encoding]::UTF8;'
 end
 
 -- Set highlight on search
@@ -97,8 +92,18 @@ vim.keymap.set('n', 'n', 'nzzzv')
 vim.keymap.set('n', 'N', 'Nzzzv')
 
 -- Remap for dealing with word wrap
-vim.keymap.set('n', 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
-vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
+vim.keymap.set(
+  'n',
+  'k',
+  "v:count == 0 ? 'gk' : 'k'",
+  { expr = true, silent = true }
+)
+vim.keymap.set(
+  'n',
+  'j',
+  "v:count == 0 ? 'gj' : 'j'",
+  { expr = true, silent = true }
+)
 
 -- Diagnostic keymaps
 vim.keymap.set(
@@ -128,7 +133,8 @@ vim.keymap.set(
 
 -- [[ Highlight on yank ]]
 -- See `:help vim.highlight.on_yank()`
-local highlight_group = vim.api.nvim_create_augroup('YankHighlight', { clear = true })
+local highlight_group =
+  vim.api.nvim_create_augroup('YankHighlight', { clear = true })
 vim.api.nvim_create_autocmd('TextYankPost', {
   callback = function()
     vim.highlight.on_yank()

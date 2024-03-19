@@ -17,15 +17,29 @@ return {
           return vim.fn.executable 'make' == 1
         end,
       },
+      'debugloop/telescope-undo.nvim',
+    },
+    keys = {
+      { -- lazy style key map
+        '<leader>u',
+        '<cmd>Telescope undo<cr>',
+        desc = 'Telescope: undo history',
+      },
     },
     opts = {
       defaults = {
+        -- layout_config = {
+        --   vertical = { width = 0.5 },
+        -- },
         mappings = {
           i = {
             ['<C-u>'] = false,
             ['<C-d>'] = false,
           },
         },
+      },
+      extensions = {
+        undo = {},
       },
     },
     config = function(_, opts)
@@ -36,71 +50,7 @@ return {
       -- Enable telescope fzf native, if installed
       pcall(require('telescope').load_extension, 'fzf')
       pcall(require('telescope').load_extension, 'harpoon')
-
-      -- Harpoon navigation
-      local function wrap_func(func, num)
-        local args = { num }
-        return function()
-          func(unpack(args))
-        end
-      end
-
-      vim.keymap.set(
-        'n',
-        '<A-h>',
-        wrap_func(require('harpoon.ui').nav_file, 1),
-        { desc = 'Harpoon: Go to mark 1' }
-      )
-      vim.keymap.set(
-        'n',
-        '<A-u>',
-        wrap_func(require('harpoon.ui').nav_file, 2),
-        { desc = 'Harpoon: Go to mark 2' }
-      )
-      vim.keymap.set(
-        'n',
-        '<A-i>',
-        wrap_func(require('harpoon.ui').nav_file, 3),
-        { desc = 'Harpoon: Go to mark 3' }
-      )
-      vim.keymap.set(
-        'n',
-        '<A-o>',
-        wrap_func(require('harpoon.ui').nav_file, 4),
-        { desc = 'Harpoon: Go to mark 4' }
-      )
-      vim.keymap.set(
-        'n',
-        '<A-t>',
-        wrap_func(require('harpoon.term').gotoTerminal, 4),
-        { desc = 'Harpoon: Go to terminal' }
-      )
-      vim.keymap.set(
-        'n',
-        '<A-n>',
-        require('harpoon.ui').nav_next,
-        { desc = 'Harpoon: Go to next mark' }
-      )
-      vim.keymap.set(
-        'n',
-        '<A-p>',
-        require('harpoon.ui').nav_prev,
-        { desc = 'Harpoon: Go to previous mark' }
-      )
-
-      vim.keymap.set(
-        'n',
-        '<A-m>',
-        require('harpoon.mark').toggle_file,
-        { desc = 'Harpoon: [M]ark this [F]ile' }
-      )
-      vim.keymap.set(
-        'n',
-        '<leader>mf',
-        require('harpoon.mark').toggle_file,
-        { desc = 'Harpoon: [M]ark this [F]ile' }
-      )
-      -- vim.keymap.set('n', '<leader>ms', require('telescope._extensions.harpoon').mark, { desc = 'Harpoon: [M]arks [S]how' })
+      pcall(require('telescope').load_extension, 'undo')
 
       -- Telescope live_grep in git root
       -- Function to find the git root directory based on the current buffer's path
@@ -119,7 +69,9 @@ return {
 
         -- Find the Git root directory from the current file's path
         local git_root = vim.fn.systemlist(
-          'git -C ' .. vim.fn.escape(current_dir, ' ') .. ' rev-parse --show-toplevel'
+          'git -C '
+            .. vim.fn.escape(current_dir, ' ')
+            .. ' rev-parse --show-toplevel'
         )[1]
         if vim.v.shell_error ~= 0 then
           print 'Not a git repository. Searching on current working directory'
@@ -138,7 +90,11 @@ return {
         end
       end
 
-      vim.api.nvim_create_user_command('LiveGrepGitRoot', live_grep_git_root, {})
+      vim.api.nvim_create_user_command(
+        'LiveGrepGitRoot',
+        live_grep_git_root,
+        {}
+      )
 
       -- See `:help telescope.builtin`
       vim.keymap.set(
