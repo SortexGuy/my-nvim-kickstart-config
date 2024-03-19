@@ -21,16 +21,31 @@ return {
     require('luasnip.loaders.from_vscode').lazy_load()
     luasnip.config.setup {}
 
-    -- Not use borders for Windows users (causes problems with LSP hover)
-    local cmp_window = function()
-      if jit.os ~= 'Windows' then
-        return {
-          completion = cmp.config.window.bordered(),
-          documentation = cmp.config.window.bordered(),
-        }
+    -- Truncate suggestions width
+    local ELLIPSIS_CHAR = '…'
+
+    local format = function(_, item)
+      local content = item.abbr
+
+      -- Get the width of the current window.
+      local win_width = vim.api.nvim_win_get_width(0)
+
+      -- Set the max content width based on either: 'fixed_width'
+      -- or a percentage of the window width, in this case 20%.
+      -- We subtract 10 from 'fixed_width' to leave room for 'kind' fields.
+      local max_content_width = math.floor(win_width * 0.2)
+
+      -- Truncate the completion entry text if it's longer than the
+      -- max content width. We subtract 3 from the max content width
+      -- to account for the "..." that will be appended to it.
+      if #content > max_content_width then
+        item.abbr = vim.fn.strcharpart(content, 0, max_content_width - 1)
+          .. ELLIPSIS_CHAR
       else
-        return {}
+        item.abbr = content .. (' '):rep(max_content_width - #content)
       end
+
+      return item
     end
 
     cmp.setup {
@@ -39,7 +54,13 @@ return {
           luasnip.lsp_expand(args.body)
         end,
       },
-      window = cmp_window(),
+      window = {
+        completion = cmp.config.window.bordered(),
+        documentation = cmp.config.window.bordered(),
+      },
+      formatting = {
+        format = format,
+      },
       completion = {
         completeopt = 'menu,menuone,noinsert',
       },
