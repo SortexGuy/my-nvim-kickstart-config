@@ -11,6 +11,7 @@ return {
   'mfussenegger/nvim-dap',
   -- NOTE: And you can specify dependencies as well
   dependencies = {
+    'nvim-neotest/nvim-nio',
     -- Creates a beautiful debugger UI
     'rcarriga/nvim-dap-ui',
 
@@ -43,7 +44,12 @@ return {
     }
 
     -- Basic debugging keymaps, feel free to change to your liking!
-    vim.keymap.set('n', '<F5>', dap.continue, { desc = 'Debug: Start/Continue' })
+    vim.keymap.set(
+      'n',
+      '<F5>',
+      dap.continue,
+      { desc = 'Debug: Start/Continue' }
+    )
     vim.keymap.set('n', '<F1>', dap.step_into, { desc = 'Debug: Step Into' })
     vim.keymap.set('n', '<F2>', dap.step_over, { desc = 'Debug: Step Over' })
     vim.keymap.set('n', '<F3>', dap.step_out, { desc = 'Debug: Step Out' })
