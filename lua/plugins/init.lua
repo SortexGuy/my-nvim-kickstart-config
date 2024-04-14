@@ -29,9 +29,14 @@ return {
     },
   },
   -- "gc" to comment visual regions/lines
-  { 'numToStr/Comment.nvim',    opts = {} },
+  { 'numToStr/Comment.nvim', opts = {} },
   -- Highlight todo, notes, etc in comments
-  { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
+  {
+    'folke/todo-comments.nvim',
+    event = 'VimEnter',
+    dependencies = { 'nvim-lua/plenary.nvim' },
+    opts = { signs = false },
+  },
   {
     'Exafunction/codeium.nvim',
     dependencies = {
@@ -45,20 +50,19 @@ return {
   'ThePrimeagen/vim-be-good',
   {
     'norcalli/nvim-colorizer.lua',
-    config = function ()
+    config = function()
       require('colorizer').setup({ '*' }, {
-        RGB      = true;         -- #RGB hex codes
-        RRGGBB   = true;         -- #RRGGBB hex codes
-        names    = true;         -- "Name" codes like Blue
-        RRGGBBAA = true;        -- #RRGGBBAA hex codes
-        rgb_fn   = true;        -- CSS rgb() and rgba() functions
-        hsl_fn   = true;        -- CSS hsl() and hsla() functions
-        css      = true;        -- Enable all CSS features: rgb_fn, hsl_fn, names, RGB, RRGGBB
-        css_fn   = true;        -- Enable all CSS *functions*: rgb_fn, hsl_fn
+        RGB = true, -- #RGB hex codes
+        RRGGBB = true, -- #RRGGBB hex codes
+        names = true, -- "Name" codes like Blue
+        RRGGBBAA = true, -- #RRGGBBAA hex codes
+        rgb_fn = true, -- CSS rgb() and rgba() functions
+        hsl_fn = true, -- CSS hsl() and hsla() functions
+        css = true, -- Enable all CSS features: rgb_fn, hsl_fn, names, RGB, RRGGBB
+        css_fn = true, -- Enable all CSS *functions*: rgb_fn, hsl_fn
         -- Available modes: foreground, background
-        mode     = 'background'; -- Set the display mode.
+        mode = 'background', -- Set the display mode.
       })
-      
-    end
+    end,
   },
 }

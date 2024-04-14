@@ -18,8 +18,8 @@ vim.keymap.set('v', 'K', ":m '<-2<CR>gv=gv")
 
 nmap('<C-d>', '<C-d>zz')
 nmap('<C-u>', '<C-u>zz')
-nmap('nzzzv')
-nmap('Nzzzv')
+nmap('n', 'nzzzv')
+nmap('N', 'Nzzzv')
 
 -- Remap for dealing with word wrap
 nmap('k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
@@ -28,7 +28,11 @@ nmap('j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
 -- Diagnostic keymaps
 nmap('[d', vim.diagnostic.goto_prev, { desc = 'Go to previous diagnostic message' })
 nmap(']d', vim.diagnostic.goto_next, { desc = 'Go to next diagnostic message' })
-nmap('<leader>e', vim.diagnostic.open_float, { desc = 'Open floating diagnostic message' })
+nmap(
+  '<leader>e',
+  vim.diagnostic.open_float,
+  { desc = 'Open floating diagnostic message' }
+)
 nmap('<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostics list' })
 
 -- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier

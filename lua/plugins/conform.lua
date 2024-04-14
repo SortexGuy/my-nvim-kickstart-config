@@ -21,7 +21,7 @@ return { -- Autoformat
         -- c = true,
         -- cpp = true,
         javascript = true,
-        typescript = true
+        typescript = true,
       }
       return {
         timeout_ms = 500,
