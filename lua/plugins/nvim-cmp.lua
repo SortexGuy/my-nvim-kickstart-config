@@ -15,28 +15,14 @@ return {
         end
         return 'make install_jsregexp'
       end)(),
-      dependencies = {
-        -- `friendly-snippets` contains a variety of premade snippets.
-        --    See the README about individual language/framework/plugin snippets:
-        --    https://github.com/rafamadriz/friendly-snippets
-        -- {
-        --   'rafamadriz/friendly-snippets',
-        --   config = function()
-        --     require('luasnip.loaders.from_vscode').lazy_load()
-        --   end,
-        -- },
-      },
     },
     'saadparwaiz1/cmp_luasnip',
 
-    -- Adds other completion capabilities.
-    --  nvim-cmp does not ship with all sources by default. They are split
-    --  into multiple repos for maintenance purposes.
     'hrsh7th/cmp-nvim-lsp',
     'hrsh7th/cmp-path',
-
     -- Adds a number of user-friendly snippets
     'rafamadriz/friendly-snippets',
+    'onsails/lspkind.nvim',
   },
   config = function()
     -- [[ Configure nvim-cmp ]]
@@ -45,30 +31,31 @@ return {
     local luasnip = require 'luasnip'
     require('luasnip.loaders.from_vscode').lazy_load()
     luasnip.config.setup {}
+    local lspkind = require 'lspkind'
 
     -- Truncate suggestions width
     local ELLIPSIS_CHAR = '…'
 
     local format = function(_, item)
-      local content = item.abbr
+      local content = item.menu
+      if content == nil then
+        return item
+      end
 
       -- Get the width of the current window.
       local win_width = vim.api.nvim_win_get_width(0)
-
       -- Set the max content width based on either: 'fixed_width'
       -- or a percentage of the window width, in this case 20%.
       -- We subtract 10 from 'fixed_width' to leave room for 'kind' fields.
       local max_content_width = math.floor(win_width * 0.2)
-
       -- Truncate the completion entry text if it's longer than the
       -- max content width. We subtract 3 from the max content width
       -- to account for the "..." that will be appended to it.
       if #content > max_content_width then
-        item.abbr = vim.fn.strcharpart(content, 0, max_content_width - 1) .. ELLIPSIS_CHAR
+        item.menu = vim.fn.strcharpart(content, 0, max_content_width - 1) .. ELLIPSIS_CHAR
       else
-        item.abbr = content .. (' '):rep(max_content_width - #content)
+        item.menu = content .. (' '):rep(max_content_width - #content)
       end
-
       return item
     end
 
@@ -83,7 +70,29 @@ return {
         documentation = cmp.config.window.bordered(),
       },
       formatting = {
-        format = format,
+        format = lspkind.cmp_format {
+          mode = 'symbol_text',
+          maxwidth = function()
+            -- Get the width of the current window.
+            local win_width = vim.api.nvim_win_get_width(0)
+
+            -- Set the max content width based on either: 'fixed_width'
+            -- or a percentage of the window width, in this case 20%.
+            -- We subtract 10 from 'fixed_width' to leave room for 'kind' fields.
+            local max_content_width = math.floor(win_width * 0.15)
+            return max_content_width
+          end,
+          ellipsis_char = ELLIPSIS_CHAR,
+          show_labelDetails = true, -- show labelDetails in menu. Disabled by default
+          menu = {
+            buffer = '[Buffer] ',
+            nvim_lsp = '[LSP] ',
+            luasnip = '[LuaSnip] ',
+            nvim_lua = '[Lua] ',
+            latex_symbols = '[Latex] ',
+          },
+          before = format,
+        },
       },
       completion = {
         completeopt = 'menu,menuone,noinsert',
