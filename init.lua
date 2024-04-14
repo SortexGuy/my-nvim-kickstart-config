@@ -6,6 +6,8 @@ vim.g.maplocalleader = ' '
 
 require 'options'
 
+require 'keybinds'
+
 -- Install package manager
 --    https://github.com/folke/lazy.nvim
 --    `:help lazy.nvim.txt` for more info
@@ -46,8 +48,6 @@ require('lazy').setup('plugins', {
 })
 
 require 'custom.theme'
-
-require 'keybinds'
 
 -- [[ Highlight on yank ]]
 -- See `:help vim.highlight.on_yank()`
