@@ -13,7 +13,7 @@ return {
 
     -- nmap("<leader>mf", function() harpoon:list():append() end, 'Harpoon: Mark file')
     nmap('<A-f>', function()
-      harpoon:list():append()
+      harpoon:list():add()
     end, 'Harpoon: Mark file')
     nmap('<A-m>', function()
       harpoon.ui:toggle_quick_menu(harpoon:list())

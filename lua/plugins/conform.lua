@@ -28,6 +28,8 @@ return { -- Autoformat
       lua = { 'lua_ls', 'stylua' },
       fish = { 'fish_indent' },
       text = { 'spellcheck' },
+      javascript = { { 'prettierd', 'prettier' } },
+      typescript = { { 'prettierd', 'prettier' } },
       -- Use the "*" filetype to run formatters on all filetypes.
       ['*'] = { 'codespell' },
       -- Use the "_" filetype to run formatters on filetypes that don't
@@ -39,7 +41,6 @@ return { -- Autoformat
       --
       -- You can use a sub-list to tell conform to run *until* a formatter
       -- is found.
-      -- javascript = { { "prettierd", "prettier" } },
     },
   },
   config = function(_, opts)
