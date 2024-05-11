@@ -143,7 +143,7 @@ return {
 
       local servers = {
         clangd = {
-          -- cmd = { 'clangd', get_clangd_driver_for_windows() },
+          cmd = { 'clangd', get_clangd_driver_for_windows() },
         },
         pyright = {},
         tsserver = {},
