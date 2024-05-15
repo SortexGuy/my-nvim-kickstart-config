@@ -86,3 +86,14 @@ if vim.g.neovide then
   vim.g.neovide_transparency = 0.85
   vim.o.guifont = 'JetBrainsMono Nerd Font:h14' -- text below applies for VimScript
 end
+
+vim.api.nvim_create_autocmd('FileType', {
+  pattern = { 'markdown', 'text' },
+  callback = function()
+    local vol = vim.opt_local
+
+    vol.wrap = true
+    vol.spelllang = { 'en_us', 'es' }
+    vol.spell = true
+  end,
+})
