@@ -24,6 +24,7 @@ return { -- Autoformat
       c = { 'clang-format' },
       cpp = { 'clang-format' },
       cmake = { 'cmake-format' },
+      gdscript = { 'gdformat' },
       bash = { 'shfmt' },
       lua = { 'lua_ls', 'stylua' },
       fish = { 'fish_indent' },
