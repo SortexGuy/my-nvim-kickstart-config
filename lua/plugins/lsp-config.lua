@@ -136,7 +136,7 @@ return {
       -- Function to provide the driver arg to clangd in Windows
       local function get_clangd_driver_for_windows()
         if jit.os ~= 'Windows' or not vim.fn.executable 'c++' then
-          return ''
+          return '--background-index'
         end
         return '--query-driver=' .. vim.fn.exepath 'c++.exe'
       end
