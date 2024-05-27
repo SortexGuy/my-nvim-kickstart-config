@@ -87,13 +87,17 @@ if vim.g.neovide then
   vim.o.guifont = 'JetBrainsMono Nerd Font:h14' -- text below applies for VimScript
 end
 
+vim.filetype.add {
+  pattern = { ['.*/hypr/.*%.conf'] = 'hyprlang' },
+}
+
+vim.opt.spelllang = { 'en_us', 'es' }
 vim.api.nvim_create_autocmd('FileType', {
-  pattern = { 'markdown', 'text' },
+  pattern = { 'html', 'markdown', 'text' },
   callback = function()
     local vol = vim.opt_local
 
     vol.wrap = true
-    vol.spelllang = { 'en_us', 'es' }
     vol.spell = true
   end,
 })

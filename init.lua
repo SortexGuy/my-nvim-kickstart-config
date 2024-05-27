@@ -45,6 +45,9 @@ require('lazy').setup('plugins', {
       lazy = '💤 ',
     },
   },
+  change_detection = {
+    notify = false,
+  },
 })
 
 require 'custom.theme'
