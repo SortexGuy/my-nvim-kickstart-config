@@ -145,10 +145,6 @@ return {
         clangd = {
           cmd = { 'clangd', get_clangd_driver_for_windows() },
         },
-        pyright = {},
-        tsserver = {},
-        html = { filetypes = { 'html', 'twig', 'hbs' } },
-        jsonls = {},
 
         lua_ls = {
           Lua = {
