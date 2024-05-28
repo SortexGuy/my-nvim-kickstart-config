@@ -28,8 +28,8 @@ return { -- Autoformat
       lua = { 'lua_ls', 'stylua' },
       fish = { 'fish_indent' },
       text = { 'spellcheck' },
-      javascript = { { 'prettierd', 'prettier' } },
-      typescript = { { 'prettierd', 'prettier' } },
+      javascript = { 'prettierd', 'prettier' },
+      typescript = { 'prettierd', 'prettier' },
       -- Use the "*" filetype to run formatters on all filetypes.
       ['*'] = { 'codespell' },
       -- Use the "_" filetype to run formatters on filetypes that don't

@@ -37,15 +37,32 @@ return {
     dependencies = { 'nvim-lua/plenary.nvim' },
     opts = { signs = false },
   },
+  -- {
+  --   'Exafunction/codeium.nvim',
+  --   dependencies = {
+  --     'nvim-lua/plenary.nvim',
+  --     'hrsh7th/nvim-cmp',
+  --   },
+  --   config = function()
+  --     require('codeium').setup {}
+  --   end,
+  -- },
   {
-    'Exafunction/codeium.nvim',
-    dependencies = {
-      'nvim-lua/plenary.nvim',
-      'hrsh7th/nvim-cmp',
+    'supermaven-inc/supermaven-nvim',
+    opts = {
+      -- keymaps = {
+      --   accept_suggestion = '<Tab>',
+      --   clear_suggestion = '<C-]>',
+      --   accept_word = '<C-j>',
+      -- },
+      -- ignore_filetypes = { cpp = true },
+      -- color = {
+      --   suggestion_color = '#ffffff',
+      --   cterm = 244,
+      -- },
+      disable_inline_completion = true, -- disables inline completion for use with cmp
+      disable_keymaps = true, -- disables built in keymaps for more manual control
     },
-    config = function()
-      require('codeium').setup {}
-    end,
   },
   'ThePrimeagen/vim-be-good',
   {
