@@ -212,6 +212,22 @@ return {
           }
         end,
       })
+
+      if jit.os ~= 'Windows' then
+        -- Fish LSP
+        vim.api.nvim_create_autocmd({ 'BufEnter', 'BufWinEnter' }, {
+          pattern = { '.*/fish/.*%.sh', '*.fish' },
+          callback = function(event)
+            print(string.format('starting fish-lsp for %s', vim.inspect(event)))
+            vim.lsp.start {
+              name = 'fish-lsp',
+              cmd = { 'fish-lsp', 'start' },
+              filetypes = { 'fish' },
+              root_dir = vim.fn.getcwd(),
+            }
+          end,
+        })
+      end
     end,
   },
 }
