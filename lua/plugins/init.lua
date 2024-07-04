@@ -4,6 +4,7 @@ return {
   'tpope/vim-rhubarb',
   -- Detect tabstop and shiftwidth automatically
   'tpope/vim-sleuth',
+  'tpope/vim-abolish',
   -- {
   --   -- Set lualine as statusline
   --   'nvim-lualine/lualine.nvim',
