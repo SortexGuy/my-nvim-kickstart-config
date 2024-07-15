@@ -68,7 +68,6 @@ return {
     priority = 1000,
     opts = {
       livePreview = true,
-      themeConfigFile = '~/.config/nvim/lua/custom/theme.lua',
       themes = {
         { name = 'Catppuccin Mocha', colorscheme = 'catppuccin' },
         { name = 'Gruvbox', colorscheme = 'gruvbox' },
