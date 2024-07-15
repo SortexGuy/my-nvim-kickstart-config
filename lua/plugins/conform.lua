@@ -30,6 +30,7 @@ return { -- Autoformat
       text = { 'spellcheck' },
       javascript = { 'prettierd', 'prettier' },
       typescript = { 'prettierd', 'prettier' },
+      sql = { 'sqlfmt' },
       -- Use the "*" filetype to run formatters on all filetypes.
       ['*'] = { 'codespell' },
       -- Use the "_" filetype to run formatters on filetypes that don't

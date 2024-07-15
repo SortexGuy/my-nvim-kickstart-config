@@ -78,7 +78,7 @@ vim.o.termguicolors = true
 
 vim.wo.wrap = false
 vim.opt.tabstop = 4
-vim.opt.shiftwidth = 4
+vim.opt.shiftwidth = 0
 
 if vim.g.neovide then
   vim.g.neovide_no_idle = true
@@ -99,5 +99,12 @@ vim.api.nvim_create_autocmd('FileType', {
 
     vol.wrap = true
     vol.spell = true
+  end,
+})
+
+vim.api.nvim_create_autocmd('FileType', {
+  pattern = { 'typescript', 'javascript', 'typescriptreact', 'javascriptreact' },
+  callback = function()
+    vim.opt_local.tabstop = 2
   end,
 })
