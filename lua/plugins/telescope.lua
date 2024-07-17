@@ -32,6 +32,22 @@ return { -- Fuzzy Finder (files, lsp, etc)
       -- layout_config = {
       --   vertical = { width = 0.5 },
       -- },
+      pickers = {
+        buffers = {
+          show_all_buffers = true,
+          sort_lastused = true,
+          theme = 'dropdown',
+          previewer = true,
+          mappings = {
+            i = {
+              ['<S-d>'] = 'delete_buffer',
+            },
+            n = {
+              ['d'] = 'delete_buffer',
+            },
+          },
+        },
+      },
       mappings = {
         i = {
           ['<C-u>'] = false,
