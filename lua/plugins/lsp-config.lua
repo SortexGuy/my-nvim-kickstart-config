@@ -6,7 +6,7 @@ return {
     'neovim/nvim-lspconfig',
     dependencies = {
       -- Automatically install LSPs and related tools to stdpath for Neovim
-      'williamboman/mason.nvim',
+      { 'williamboman/mason.nvim', config = true }, -- NOTE: Must be loaded before dependants
       'williamboman/mason-lspconfig.nvim',
       'WhoIsSethDaniel/mason-tool-installer.nvim',
 
@@ -14,9 +14,22 @@ return {
       -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
       { 'j-hui/fidget.nvim', opts = {} },
 
-      -- `neodev` configures Lua LSP for your Neovim config, runtime and plugins
-      -- used for completion, annotations and signatures of Neovim apis
-      { 'folke/neodev.nvim', opts = {} },
+      -- Allows extra capabilities provided by nvim-cmp
+      'hrsh7th/cmp-nvim-lsp',
+
+      {
+        -- `lazydev` configures Lua LSP for your Neovim config, runtime and plugins
+        -- used for completion, annotations and signatures of Neovim apis
+        'folke/lazydev.nvim',
+        ft = 'lua',
+        opts = {
+          library = {
+            -- Load luvit types when the `vim.uv` word is found
+            { path = 'luvit-meta/library', words = { 'vim%.uv' } },
+          },
+        },
+      },
+      { 'Bilal2453/luvit-meta', lazy = true },
     },
     config = function(_, opts)
       --  This function gets run when an LSP attaches to a particular buffer.
@@ -103,16 +116,54 @@ return {
           --
           -- When you move your cursor, the highlights will be cleared (the second autocommand).
           local client = vim.lsp.get_client_by_id(event.data.client_id)
-          if client and client.server_capabilities.documentHighlightProvider then
+          if
+            client
+            and client.supports_method(
+              vim.lsp.protocol.Methods.textDocument_documentHighlight
+            )
+          then
+            local highlight_augroup =
+              vim.api.nvim_create_augroup('kickstart-lsp-highlight', { clear = false })
             vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
               buffer = event.buf,
+              group = highlight_augroup,
               callback = vim.lsp.buf.document_highlight,
             })
 
             vim.api.nvim_create_autocmd({ 'CursorMoved', 'CursorMovedI' }, {
               buffer = event.buf,
+              group = highlight_augroup,
               callback = vim.lsp.buf.clear_references,
             })
+
+            vim.api.nvim_create_autocmd('LspDetach', {
+              group = vim.api.nvim_create_augroup(
+                'kickstart-lsp-detach',
+                { clear = true }
+              ),
+              callback = function(event2)
+                vim.lsp.buf.clear_references()
+                vim.api.nvim_clear_autocmds {
+                  group = 'kickstart-lsp-highlight',
+                  buffer = event2.buf,
+                }
+              end,
+            })
+          end
+
+          -- The following code creates a keymap to toggle inlay hints in your
+          -- code, if the language server you are using supports them
+          --
+          -- This may be unwanted, since they displace some of your code
+          if
+            client
+            and client.supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint)
+          then
+            map('<leader>th', function()
+              vim.lsp.inlay_hint.enable(
+                not vim.lsp.inlay_hint.is_enabled { bufnr = event.buf }
+              )
+            end, '[T]oggle Inlay [H]ints')
           end
         end,
       })
@@ -147,26 +198,41 @@ return {
         },
 
         lua_ls = {
-          Lua = {
-            workspace = {
-              library = {
-                '/usr/share/nvim/runtime/lua',
-                '/usr/share/nvim/runtime/lua/lsp',
-                '/usr/share/awesome/lib',
-                '/usr/share/lua/5.4',
+          -- cmd = {...},
+          -- filetypes = { ...},
+          -- capabilities = {},
+          settings = {
+            Lua = {
+              completion = {
+                callSnippet = 'Replace',
               },
-              -- checkThirdParty = true,
-            },
-            completion = {
-              enable = true,
-            },
-            telemetry = { enable = false },
-            diagnostics = {
-              globals = { 'vim', 'awesome', 'client', 'root' },
-              disable = { 'missing-fields' },
+              -- You can toggle below to ignore Lua_LS's noisy `missing-fields` warnings
+              diagnostics = { disable = { 'missing-fields' } },
             },
           },
         },
+
+        -- lua_ls = {
+        --   Lua = {
+        --     workspace = {
+        --       library = {
+        --         '/usr/share/nvim/runtime/lua',
+        --         '/usr/share/nvim/runtime/lua/lsp',
+        --         '/usr/share/awesome/lib',
+        --         '/usr/share/lua/5.4',
+        --       },
+        --       -- checkThirdParty = true,
+        --     },
+        --     completion = {
+        --       enable = true,
+        --     },
+        --     telemetry = { enable = false },
+        --     diagnostics = {
+        --       globals = { 'vim', 'awesome', 'client', 'root' },
+        --       disable = { 'missing-fields' },
+        --     },
+        --   },
+        -- },
       }
 
       -- vim.lsp.set_log_level 'debug'
