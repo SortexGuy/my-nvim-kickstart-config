@@ -85,23 +85,34 @@ return {
   --     require('codeium').setup {}
   --   end,
   -- },
-  {
-    'supermaven-inc/supermaven-nvim',
-    opts = {
-      -- keymaps = {
-      --   accept_suggestion = '<Tab>',
-      --   clear_suggestion = '<C-]>',
-      --   accept_word = '<C-j>',
-      -- },
-      -- ignore_filetypes = { cpp = true },
-      -- color = {
-      --   suggestion_color = '#ffffff',
-      --   cterm = 244,
-      -- },
-      disable_inline_completion = true, -- disables inline completion for use with cmp
-      disable_keymaps = true, -- disables built in keymaps for more manual control
-    },
-  },
+  -- {
+  --   'supermaven-inc/supermaven-nvim',
+  --   opts = {
+  --     -- keymaps = {
+  --     --   accept_suggestion = '<Tab>',
+  --     --   clear_suggestion = '<C-]>',
+  --     --   accept_word = '<C-j>',
+  --     -- },
+  --     -- ignore_filetypes = { cpp = true },
+  --     -- color = {
+  --     --   suggestion_color = '#ffffff',
+  --     --   cterm = 244,
+  --     -- },
+  --     disable_inline_completion = true, -- disables inline completion for use with cmp
+  --     disable_keymaps = true, -- disables built in keymaps for more manual control
+  --     condition = function()
+  --       return true
+  --     end,
+  --   },
+  --   config = function(opts)
+  --     require('supermaven-nvim').setup(opts)
+  --     local api = require 'supermaven-nvim.api'
+  --     api.use_free_version()
+  --     if api.is_running() then
+  --       api.stop()
+  --     end
+  --   end,
+  -- },
   'ThePrimeagen/vim-be-good',
   {
     'NvChad/nvim-colorizer.lua',

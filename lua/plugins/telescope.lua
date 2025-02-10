@@ -36,7 +36,7 @@ return { -- Fuzzy Finder (files, lsp, etc)
         buffers = {
           show_all_buffers = true,
           sort_lastused = true,
-          theme = 'dropdown',
+          theme = 'ivy',
           previewer = true,
           mappings = {
             i = {

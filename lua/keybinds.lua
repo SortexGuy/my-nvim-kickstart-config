@@ -20,7 +20,7 @@ nmap('<C-d>', '<C-d>zz')
 nmap('<C-u>', '<C-u>zz')
 nmap('n', 'nzzzv')
 nmap('N', 'Nzzzv')
-nmap('<C-o>', '<C-S-6>')
+-- nmap('<C-o>', '<C-S-6>')
 
 -- Remap for dealing with word wrap
 nmap('k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })

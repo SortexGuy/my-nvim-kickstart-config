@@ -85,6 +85,7 @@ return {
           ellipsis_char = ELLIPSIS_CHAR,
           show_labelDetails = true, -- show labelDetails in menu. Disabled by default
           menu = {
+            -- codeium = '[Codeium]',
             buffer = '[Buffer] ',
             nvim_lsp = '[LSP] ',
             luasnip = '[LuaSnip] ',
@@ -149,7 +150,8 @@ return {
           -- set group index to 0 to skip loading LuaLS completions as lazydev recommends it
           group_index = 0,
         },
-        { name = 'supermaven' },
+        { name = 'codeium' },
+        -- { name = 'supermaven' },
         { name = 'nvim_lsp' },
         { name = 'luasnip' },
         { name = 'path' },
