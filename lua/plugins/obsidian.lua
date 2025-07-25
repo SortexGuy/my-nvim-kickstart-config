@@ -11,7 +11,7 @@ return {
       workspaces = {
         {
           name = 'Absolute',
-          path = '~/Documentos/Obsidian/Absolute',
+          path = '~/Documents/Obsidian/Absolute',
         },
       },
     },

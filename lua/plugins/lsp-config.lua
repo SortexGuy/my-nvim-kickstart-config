@@ -196,16 +196,21 @@ return {
         clangd = {
           cmd = { 'clangd', get_clangd_driver_for_windows() },
         },
+        ts_ls = {
+          cmd = {
+            'bun',
+            vim.fn.expand '$HOME/.local/share/nvim/mason/bin/typescript-language-server',
+            '--stdio',
+          },
+        },
 
         lua_ls = {
-          -- cmd = {...},
-          -- filetypes = { ...},
-          -- capabilities = {},
           settings = {
             Lua = {
               completion = {
                 callSnippet = 'Replace',
               },
+              telemetry = { enable = false },
               -- You can toggle below to ignore Lua_LS's noisy `missing-fields` warnings
               diagnostics = { disable = { 'missing-fields' } },
             },
@@ -223,10 +228,6 @@ return {
         --       },
         --       -- checkThirdParty = true,
         --     },
-        --     completion = {
-        --       enable = true,
-        --     },
-        --     telemetry = { enable = false },
         --     diagnostics = {
         --       globals = { 'vim', 'awesome', 'client', 'root' },
         --       disable = { 'missing-fields' },
@@ -253,6 +254,8 @@ return {
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
       require('mason-lspconfig').setup {
+        ensure_installed = {},
+        automatic_installation = true,
         handlers = {
           function(server_name)
             local server = servers[server_name] or {}
@@ -265,6 +268,8 @@ return {
           end,
         },
       }
+
+      require('lspconfig').gdscript.setup { capabilities = capabilities, settings = {} }
 
       -- Hyprlang LSP
       vim.api.nvim_create_autocmd({ 'BufEnter', 'BufWinEnter' }, {
@@ -279,8 +284,8 @@ return {
         end,
       })
 
+      -- Fish LSP
       if jit.os ~= 'Windows' then
-        -- Fish LSP
         vim.api.nvim_create_autocmd({ 'BufEnter', 'BufWinEnter' }, {
           pattern = { '.*/fish/.*%.sh', '*.fish' },
           callback = function(event)

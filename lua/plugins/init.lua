@@ -185,4 +185,34 @@ return {
       autocmd = { enable = true }, -- Enable the inlay hints on `LspAttach` event
     },
   },
+  {
+    'habamax/vim-godot',
+    event = 'VimEnter',
+  },
+  {
+    'windwp/nvim-ts-autotag',
+    filetypes = {
+      'javascript',
+      'javascriptreact',
+      'typescript',
+      'typescriptreact',
+      'html',
+    },
+    config = true,
+  },
+  {
+    'S1M0N38/love2d.nvim',
+    event = 'VeryLazy',
+    opts = {},
+    keys = {
+      { '<leader>v', ft = 'lua', desc = 'LÖVE' },
+      { '<leader>vv', '<cmd>LoveRun<cr>', ft = 'lua', desc = 'Run LÖVE' },
+      { '<leader>vs', '<cmd>LoveStop<cr>', ft = 'lua', desc = 'Stop LÖVE' },
+    },
+  },
+  {
+    'mrcjkb/rustaceanvim',
+    version = '^6', -- Recommended
+    lazy = false, -- This plugin is already lazy
+  },
 }

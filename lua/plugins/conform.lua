@@ -40,6 +40,7 @@ return { -- Autoformat
       cmake = { 'cmake-format' },
       bash = { 'shfmt' },
       lua = { 'lua_ls', 'stylua' },
+      rust = { 'rustfmt', lsp_format = 'fallback' },
       fish = { 'fish_indent' },
       text = { 'spellcheck' },
       javascript = { 'prettierd', 'prettier' },
