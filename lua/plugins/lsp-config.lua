@@ -275,7 +275,6 @@ return {
       vim.api.nvim_create_autocmd({ 'BufEnter', 'BufWinEnter' }, {
         pattern = { '.*/hypr/.*%.conf', '*.hl', 'hypr*.conf' },
         callback = function(event)
-          print(string.format('starting hyprls for %s', vim.inspect(event)))
           vim.lsp.start {
             name = 'hyprlang',
             cmd = { 'hyprls' },
@@ -289,7 +288,6 @@ return {
         vim.api.nvim_create_autocmd({ 'BufEnter', 'BufWinEnter' }, {
           pattern = { '.*/fish/.*%.sh', '*.fish' },
           callback = function(event)
-            print(string.format('starting fish-lsp for %s', vim.inspect(event)))
             vim.lsp.start {
               name = 'fish-lsp',
               cmd = { 'fish-lsp', 'start' },
