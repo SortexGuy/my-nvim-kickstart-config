@@ -330,12 +330,12 @@ return {
             -- certain features of an LSP (for example, turning off formatting for tsserver)
             server.capabilities =
               vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
-            require('lspconfig')[server_name].setup(server)
+            vim.lsp.config(server_name, server)
           end,
         },
       }
 
-      require('lspconfig').gdscript.setup { capabilities = capabilities, settings = {} }
+      vim.lsp.config('gdscript', { capabilities = capabilities, settings = {} })
 
       -- Hyprlang LSP
       vim.api.nvim_create_autocmd({ 'BufEnter', 'BufWinEnter' }, {
