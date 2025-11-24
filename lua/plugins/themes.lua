@@ -1,6 +1,7 @@
 return {
   {
     'rebelot/kanagawa.nvim',
+    cond = not vim.g.vscode,
     name = 'kanagawa',
     opts = {
       undercurl = true, -- enable undercurls
@@ -17,6 +18,7 @@ return {
   {
     'uZer/pywal16.nvim',
     enabled = false,
+    cond = not vim.g.vscode,
     config = function()
       vim.cmd.colorscheme 'pywal16'
     end,

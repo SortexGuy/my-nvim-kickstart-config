@@ -58,6 +58,7 @@ return {
   {
     -- Add indentation guides even on blank lines
     'lukas-reineke/indent-blankline.nvim',
+    cond = not vim.g.vscode,
     -- Enable `lukas-reineke/indent-blankline.nvim`
     -- See `:help indent_blankline.txt`
     main = 'ibl',
@@ -71,6 +72,7 @@ return {
   -- Highlight todo, notes, etc in comments
   {
     'folke/todo-comments.nvim',
+    cond = not vim.g.vscode,
     event = 'VimEnter',
     dependencies = { 'nvim-lua/plenary.nvim' },
     opts = { signs = false },
@@ -116,6 +118,7 @@ return {
   'ThePrimeagen/vim-be-good',
   {
     'NvChad/nvim-colorizer.lua',
+    cond = not vim.g.vscode,
     config = function()
       require('colorizer').setup {
         filetypes = { '*' },
@@ -178,6 +181,7 @@ return {
   },
   {
     'MysticalDevil/inlay-hints.nvim',
+    cond = not vim.g.vscode,
     event = 'LspAttach',
     dependencies = { 'neovim/nvim-lspconfig' },
     opts = {
@@ -202,6 +206,7 @@ return {
   },
   {
     'S1M0N38/love2d.nvim',
+    cond = not vim.g.vscode,
     event = 'VeryLazy',
     opts = {},
     keys = {
@@ -212,6 +217,7 @@ return {
   },
   {
     'mrcjkb/rustaceanvim',
+    cond = not vim.g.vscode,
     version = '^6', -- Recommended
     lazy = false, -- This plugin is already lazy
   },

@@ -1,5 +1,6 @@
 return {
   'ThePrimeagen/harpoon',
+  cond = not vim.g.vscode,
   name = 'harpoon',
   branch = 'harpoon2',
   config = function()

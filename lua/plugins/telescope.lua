@@ -1,5 +1,6 @@
 return { -- Fuzzy Finder (files, lsp, etc)
   'nvim-telescope/telescope.nvim',
+  cond = not vim.g.vscode,
   event = 'VimEnter',
   branch = '0.1.x',
   dependencies = {

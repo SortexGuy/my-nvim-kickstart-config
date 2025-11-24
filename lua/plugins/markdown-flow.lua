@@ -1,5 +1,6 @@
 return {
   'jakewvincent/mkdnflow.nvim',
+  enable = false,
   opts = {
     modules = {
       bib = true,

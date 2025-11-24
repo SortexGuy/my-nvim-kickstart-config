@@ -1,6 +1,7 @@
 return {
   'IogaMaster/neocord',
   event = 'VeryLazy',
+  cond = not vim.g.vscode,
   opts = {
     -- General options
     logo = 'auto', -- "auto" or url
