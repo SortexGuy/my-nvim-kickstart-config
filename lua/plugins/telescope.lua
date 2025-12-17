@@ -33,10 +33,19 @@ return { -- Fuzzy Finder (files, lsp, etc)
       --   vertical = { width = 0.5 },
       -- },
       pickers = {
+        live_grep = {
+          theme = 'dropdown',
+        },
+        lsp_references = {
+          theme = 'dropdown',
+        },
+        find_files = {
+          theme = 'dropdown',
+        },
         buffers = {
           show_all_buffers = true,
           sort_lastused = true,
-          theme = 'ivy',
+          theme = 'dropdown',
           previewer = true,
           mappings = {
             i = {

@@ -12,6 +12,10 @@ return {
       transparent = true, -- do not set background color
       terminalColors = true, -- define vim.g.terminal_color_{0,17}
     },
+    config = function(opts)
+      require('kanagawa').setup(opts)
+      vim.cmd 'colorscheme kanagawa-dragon'
+    end,
   },
 
   {
