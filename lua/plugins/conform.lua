@@ -44,7 +44,10 @@ return { -- Autoformat
       fish = { 'fish_indent' },
       text = { 'spellcheck' },
       javascript = { 'prettierd', 'prettier' },
+      javascriptreact = { 'prettierd', 'prettier' },
       typescript = { 'prettierd', 'prettier' },
+      typescriptreact = { 'prettierd', 'prettier' },
+      haskell = { 'fourmolu' },
       sql = { 'sqlfmt' },
       -- Use the "*" filetype to run formatters on all filetypes.
       ['*'] = { 'codespell' },
@@ -79,6 +82,18 @@ return { -- Autoformat
     end, {
       desc = 'Re-enable autoformat-on-save',
     })
+
+    -- vim.api.nvim_create_user_command('FormatToggle', function(args)
+    --   if args.bang then
+    --     -- FormatDisable! will disable formatting just for this buffer
+    --     vim.b.disable_autoformat = true
+    --   else
+    --     vim.g.disable_autoformat = true
+    --   end
+    -- end, {
+    --   desc = 'Disable autoformat-on-save',
+    --   bang = true,
+    -- })
 
     vim.keymap.set(
       'n',
