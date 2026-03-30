@@ -101,8 +101,10 @@ vim.opt.scrolloff = 10
 vim.o.termguicolors = true
 
 vim.wo.wrap = false
-vim.opt.tabstop = 4
-vim.opt.shiftwidth = 0
+vim.opt.tabstop = 4 -- A TAB character looks like 4 spaces
+vim.opt.shiftwidth = 4 -- Number of spaces inserted when indenting
+vim.opt.softtabstop = 4 -- Number of spaces inserted instead of a TAB character
+vim.opt.expandtab = true -- Pressing the TAB key will insert spaces instead of a TAB character
 
 if vim.g.neovide then
   vim.g.neovide_no_idle = true

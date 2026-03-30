@@ -29,23 +29,16 @@ return { -- Fuzzy Finder (files, lsp, etc)
     -- [[ Configure Telescope ]]
     -- See `:help telescope` and `:help telescope.setup()`
     require('telescope').setup {
-      -- layout_config = {
-      --   vertical = { width = 0.5 },
-      -- },
+      defaults = {
+        layout_strategy = 'vertical',
+        layout_config = {
+          vertical = { width = 0.8, height = 0.9 },
+        },
+      },
       pickers = {
-        live_grep = {
-          theme = 'dropdown',
-        },
-        lsp_references = {
-          theme = 'dropdown',
-        },
-        find_files = {
-          theme = 'dropdown',
-        },
         buffers = {
           show_all_buffers = true,
           sort_lastused = true,
-          theme = 'dropdown',
           previewer = true,
           mappings = {
             i = {
@@ -65,9 +58,7 @@ return { -- Fuzzy Finder (files, lsp, etc)
       },
       extensions = {
         undo = {},
-        ['ui-select'] = {
-          require('telescope.themes').get_dropdown(),
-        },
+        ['ui-select'] = {},
       },
     }
 

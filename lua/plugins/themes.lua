@@ -1,4 +1,6 @@
 return {
+  ---@module 'lazy'
+  ---@type LazySpec
   {
     'rebelot/kanagawa.nvim',
     name = 'kanagawa',
@@ -14,15 +16,10 @@ return {
     },
     config = function(opts)
       require('kanagawa').setup(opts)
-      vim.cmd 'colorscheme kanagawa-dragon'
+      require('kanagawa').load 'dragon'
     end,
   },
-
-  {
-    'uZer/pywal16.nvim',
-    enabled = false,
-    config = function()
-      vim.cmd.colorscheme 'pywal16'
-    end,
-  },
+  ---@module 'lazy'
+  ---@type LazySpec
+  { 'xiyaowong/transparent.nvim' },
 }
