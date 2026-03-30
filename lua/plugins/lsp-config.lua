@@ -8,7 +8,6 @@ return {
       'WhoIsSethDaniel/mason-tool-installer.nvim',
 
       { 'j-hui/fidget.nvim', opts = {} },
-      'hrsh7th/cmp-nvim-lsp',
 
       {
         'folke/lazydev.nvim',
@@ -143,11 +142,11 @@ return {
       --  When you add nvim-cmp, luasnip, etc. Neovim now has *more* capabilities.
       --  So, we create new capabilities with nvim cmp, and then broadcast that to the servers.
       local capabilities = vim.lsp.protocol.make_client_capabilities()
-      capabilities = vim.tbl_deep_extend(
-        'force',
-        capabilities,
-        require('cmp_nvim_lsp').default_capabilities()
-      )
+      -- capabilities = vim.tbl_deep_extend(
+      --   'force',
+      --   capabilities,
+      --   require('cmp_nvim_lsp').default_capabilities()
+      -- )
       -- Setup required for ufo
       capabilities.textDocument.foldingRange = {
         dynamicRegistration = false,
@@ -314,6 +313,11 @@ return {
           end,
         },
       }
+
+      for name, server in pairs(servers) do
+        vim.lsp.config(name, server)
+        vim.lsp.enable(name)
+      end
 
       vim.lsp.config('gdscript', { capabilities = capabilities, settings = {} })
 
