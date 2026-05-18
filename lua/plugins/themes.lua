@@ -2,6 +2,22 @@ return {
   ---@module 'lazy'
   ---@type LazySpec
   {
+    'xiyaowong/transparent.nvim',
+    opts = {
+      extra_groups = {
+        'FoldColumn',
+        'GitSignsAdd',
+        'GitSignsChange',
+        'GitSignsDelete',
+        'GitSignsTopdelete',
+        'GitSignsChangedelete',
+        'GitSignsUntracked',
+      },
+    },
+  },
+  ---@module 'lazy'
+  ---@type LazySpec
+  {
     'rebelot/kanagawa.nvim',
     name = 'kanagawa',
     opts = {
@@ -11,7 +27,7 @@ return {
       keywordStyle = { italic = true },
       statementStyle = { bold = true },
       typeStyle = {},
-      transparent = true, -- do not set background color
+      transparent = vim.g.transparent_enabled,
       terminalColors = true, -- define vim.g.terminal_color_{0,17}
     },
     config = function(opts)
@@ -19,7 +35,4 @@ return {
       require('kanagawa').load 'dragon'
     end,
   },
-  ---@module 'lazy'
-  ---@type LazySpec
-  { 'xiyaowong/transparent.nvim' },
 }
