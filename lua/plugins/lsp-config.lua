@@ -1,12 +1,23 @@
+---@module 'lazy'
+---@type LazySpec
 return {
   {
     -- LSP Configuration & Plugins
     'neovim/nvim-lspconfig',
+    event = { 'BufReadPre', 'BufNewFile' },
+    cmd = { 'LspInfo', 'LspInstall', 'LspStart' },
     dependencies = {
-      { 'williamboman/mason.nvim', config = true }, -- NOTE: Must be loaded before dependants
-      'williamboman/mason-lspconfig.nvim',
+      -- NOTE: `williamboman/mason*` moved to the `mason-org` organisation with
+      -- the v2 release. GitHub still redirects the old paths, but the canonical
+      -- names are used here so `:Lazy` reports the right repo.
+      -- Must be loaded before dependants.
+      { 'mason-org/mason.nvim', opts = {} },
+      { 'mason-org/mason-lspconfig.nvim' },
+      -- { 'williamboman/mason.nvim', config = true },
+      -- { 'williamboman/mason-lspconfig.nvim' },
       'WhoIsSethDaniel/mason-tool-installer.nvim',
 
+      -- LSP progress messages in the bottom right
       { 'j-hui/fidget.nvim', opts = {} },
 
       {
@@ -14,13 +25,16 @@ return {
         ft = 'lua',
         opts = {
           library = {
-            { path = 'luvit-meta/library', words = { 'vim%.uv' } }, -- Load luvit types when the `vim.uv` word is found
+            -- Neovim ships `vim.uv` (luv) type definitions since 0.10, so the
+            -- separate `luvit-meta` plugin is no longer needed.
+            { path = '${3rd}/luv/library', words = { 'vim%.uv' } },
+            -- { path = 'luvit-meta/library', words = { 'vim%.uv' } },
           },
         },
       },
-      { 'Bilal2453/luvit-meta', lazy = true },
+      -- { 'Bilal2453/luvit-meta', lazy = true },
     },
-    config = function(_, opts)
+    config = function()
       vim.api.nvim_create_autocmd('LspAttach', {
         group = vim.api.nvim_create_augroup('kickstart-lsp-attach', { clear = true }),
         callback = function(event)
@@ -87,7 +101,7 @@ return {
           local client = vim.lsp.get_client_by_id(event.data.client_id)
           if
             client
-            and client.supports_method(
+            and client:supports_method(
               vim.lsp.protocol.Methods.textDocument_documentHighlight
             )
           then
@@ -126,7 +140,7 @@ return {
           -- This may be unwanted, since they displace some of your code
           if
             client
-            and client.supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint)
+            and client:supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint)
           then
             map('<leader>th', function()
               vim.lsp.inlay_hint.enable(
@@ -137,21 +151,32 @@ return {
         end,
       })
 
-      -- LSP servers and clients are able to communicate to each other what features they support.
-      --  By default, Neovim doesn't support everything that is in the LSP specification.
-      --  When you add nvim-cmp, luasnip, etc. Neovim now has *more* capabilities.
-      --  So, we create new capabilities with nvim cmp, and then broadcast that to the servers.
-      local capabilities = vim.lsp.protocol.make_client_capabilities()
+      -- [[ Shared capabilities ]]
+      -- `vim.lsp.config('*', ...)` (Neovim 0.11+) merges into *every* server
+      -- config, which replaces the old "build a capabilities table and pass it
+      -- to each server" dance. blink.cmp registers its own completion
+      -- capabilities the same way from its `plugin/` file, and both merge.
+      --
+      -- The only thing we have to add here is the folding range capability
+      -- that nvim-ufo needs -- without it ufo silently falls back to indent
+      -- folds.
+      vim.lsp.config('*', {
+        capabilities = {
+          textDocument = {
+            foldingRange = {
+              dynamicRegistration = false,
+              lineFoldingOnly = true,
+            },
+          },
+        },
+      })
+
+      -- local capabilities = vim.lsp.protocol.make_client_capabilities()
       -- capabilities = vim.tbl_deep_extend(
       --   'force',
       --   capabilities,
       --   require('cmp_nvim_lsp').default_capabilities()
       -- )
-      -- Setup required for ufo
-      capabilities.textDocument.foldingRange = {
-        dynamicRegistration = false,
-        lineFoldingOnly = true,
-      }
 
       -- Function to provide the driver arg to clangd in Windows
       local function get_clangd_driver_for_windows()
@@ -161,78 +186,103 @@ return {
         return '--query-driver=' .. vim.fn.exepath 'c++.exe'
       end
 
+      -- [[ Per-server overrides ]]
+      -- Keys must be `nvim-lspconfig` server names. Anything listed here is
+      -- also handed to mason-tool-installer's `ensure_installed` below.
       ---@type table<string, vim.lsp.Config>
       local servers = {
         clangd = {
           cmd = { 'clangd', get_clangd_driver_for_windows() },
         },
+
         ts_ls = {
+          -- NOTE: the previous block here used `typescript-tools.nvim` option
+          -- names (`tsserver_file_preferences`, `separate_diagnostic_server`,
+          -- `expose_as_code_action`, ...). `ts_ls` is plain
+          -- typescript-language-server and ignores all of them, so the inlay
+          -- hint and preference settings below are the same intent expressed
+          -- in the shape `ts_ls` actually reads. The original is kept at the
+          -- bottom of this table for reference.
           settings = {
-            -- Performance settings
-            separate_diagnostic_server = true,
-            publish_diagnostic_on = 'insert_leave',
-            tsserver_max_memory = 'auto',
-
-            -- Formatting preferences (from default_format_options)
-            tsserver_format_options = {
-              insertSpaceAfterCommaDelimiter = true,
-              insertSpaceAfterConstructor = false,
-              insertSpaceAfterSemicolonInForStatements = true,
-              insertSpaceBeforeAndAfterBinaryOperators = true,
-              insertSpaceAfterKeywordsInControlFlowStatements = true,
-              insertSpaceAfterFunctionKeywordForAnonymousFunctions = true,
-              insertSpaceBeforeFunctionParenthesis = false,
-              insertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis = false,
-              insertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets = false,
-              insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces = true,
-              insertSpaceAfterOpeningAndBeforeClosingEmptyBraces = true,
-              insertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces = false,
-              insertSpaceAfterOpeningAndBeforeClosingJsxExpressionBraces = false,
-              insertSpaceAfterTypeAssertion = false,
-              placeOpenBraceOnNewLineForFunctions = false,
-              placeOpenBraceOnNewLineForControlBlocks = false,
-              semicolons = 'ignore',
-              indentSwitchCase = true,
+            typescript = {
+              inlayHints = {
+                includeInlayParameterNameHints = 'all',
+                includeInlayParameterNameHintsWhenArgumentMatchesName = true,
+                includeInlayFunctionParameterTypeHints = true,
+                includeInlayVariableTypeHints = false,
+                includeInlayVariableTypeHintsWhenTypeMatchesName = false,
+                includeInlayPropertyDeclarationTypeHints = false,
+                includeInlayFunctionLikeReturnTypeHints = false,
+                includeInlayEnumMemberValueHints = true,
+              },
+              preferences = {
+                quotePreference = 'auto',
+                importModuleSpecifierEnding = 'auto',
+                jsxAttributeCompletionStyle = 'auto',
+                includeAutomaticOptionalChainCompletions = true,
+                includeCompletionsForImportStatements = true,
+                includeCompletionsWithSnippetText = true,
+                includeCompletionsWithClassMemberSnippets = true,
+                includeCompletionsWithObjectLiteralMethodSnippets = true,
+                useLabelDetailsInCompletionEntries = true,
+                allowIncompleteCompletions = true,
+                displayPartsForJSDoc = true,
+                generateReturnInDocTemplate = true,
+                allowRenameOfImportPath = true,
+                providePrefixAndSuffixTextForRename = true,
+                allowTextChangesInNewFiles = true,
+                provideRefactorNotApplicableReason = true,
+                disableLineTextInReferences = true,
+              },
+              format = {
+                insertSpaceAfterCommaDelimiter = true,
+                insertSpaceAfterConstructor = false,
+                insertSpaceAfterSemicolonInForStatements = true,
+                insertSpaceBeforeAndAfterBinaryOperators = true,
+                insertSpaceAfterKeywordsInControlFlowStatements = true,
+                insertSpaceAfterFunctionKeywordForAnonymousFunctions = true,
+                insertSpaceBeforeFunctionParenthesis = false,
+                insertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis = false,
+                insertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets = false,
+                insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces = true,
+                insertSpaceAfterOpeningAndBeforeClosingEmptyBraces = true,
+                insertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces = false,
+                insertSpaceAfterOpeningAndBeforeClosingJsxExpressionBraces = false,
+                insertSpaceAfterTypeAssertion = false,
+                placeOpenBraceOnNewLineForFunctions = false,
+                placeOpenBraceOnNewLineForControlBlocks = false,
+                semicolons = 'ignore',
+                indentSwitchCase = true,
+              },
             },
-
-            -- File preferences (combining your inlay hints with default preferences)
-            tsserver_file_preferences = {
-              -- Your current inlay hint settings
-              includeInlayParameterNameHints = 'all',
-              includeInlayParameterNameHintsWhenArgumentMatchesName = true,
-              includeInlayFunctionParameterTypeHints = true,
-              includeInlayVariableTypeHints = false,
-              includeInlayVariableTypeHintsWhenTypeMatchesName = false,
-              includeInlayPropertyDeclarationTypeHints = false,
-              includeInlayFunctionLikeReturnTypeHints = false,
-              includeInlayEnumMemberValueHints = true,
-
-              -- Important default preferences
-              quotePreference = 'auto',
-              importModuleSpecifierEnding = 'auto',
-              jsxAttributeCompletionStyle = 'auto',
-              allowTextChangesInNewFiles = true,
-              providePrefixAndSuffixTextForRename = true,
-              allowRenameOfImportPath = true,
-              includeAutomaticOptionalChainCompletions = true,
-              provideRefactorNotApplicableReason = true,
-              generateReturnInDocTemplate = true,
-              includeCompletionsForImportStatements = true,
-              includeCompletionsWithSnippetText = true,
-              includeCompletionsWithClassMemberSnippets = true,
-              includeCompletionsWithObjectLiteralMethodSnippets = true,
-              useLabelDetailsInCompletionEntries = true,
-              allowIncompleteCompletions = true,
-              displayPartsForJSDoc = true,
-              disableLineTextInReferences = true,
+            javascript = {
+              inlayHints = {
+                includeInlayParameterNameHints = 'all',
+                includeInlayParameterNameHintsWhenArgumentMatchesName = true,
+                includeInlayFunctionParameterTypeHints = true,
+                includeInlayVariableTypeHints = false,
+                includeInlayVariableTypeHintsWhenTypeMatchesName = false,
+                includeInlayPropertyDeclarationTypeHints = false,
+                includeInlayFunctionLikeReturnTypeHints = false,
+                includeInlayEnumMemberValueHints = true,
+              },
             },
-
-            -- Feature settings
-            expose_as_code_action = 'all',
-            complete_function_calls = false,
-            include_completions_with_insert_text = true,
-            code_lens = 'off',
           },
+
+          -- Previous (typescript-tools.nvim shaped) settings -- inert under `ts_ls`:
+          -- settings = {
+          --   -- Performance settings
+          --   separate_diagnostic_server = true,
+          --   publish_diagnostic_on = 'insert_leave',
+          --   tsserver_max_memory = 'auto',
+          --   tsserver_format_options = { ... },
+          --   tsserver_file_preferences = { ... },
+          --   -- Feature settings
+          --   expose_as_code_action = 'all',
+          --   complete_function_calls = false,
+          --   include_completions_with_insert_text = true,
+          --   code_lens = 'off',
+          -- },
         },
 
         -- lua_ls = {
@@ -289,62 +339,115 @@ return {
         },
       }
 
-      require('mason').setup()
+      -- Mason itself is set up by its own lazy spec above (`opts = {}`), so it
+      -- is already initialised by the time this runs.
+      -- require('mason').setup()
+
       -- You can add other tools here that you want Mason to install
       -- for you, so that they are available from within Neovim.
       local ensure_installed = vim.tbl_keys(servers or {})
       vim.list_extend(ensure_installed, {
         'stylua', -- Used to format Lua code
+        -- Formatters used by conform.nvim (see lua/plugins/conform.lua).
+        -- Names here are Mason package names, which sometimes differ from
+        -- conform's formatter names (`cmakelang` provides the `cmake-format`
+        -- binary that conform's `cmake_format` runs).
+        'codespell',
+        'prettierd',
+        'cmakelang',
+        'goimports',
+        'shfmt',
+        'fourmolu',
+        'sqlfmt',
+        -- Not Mason-installable on purpose:
+        --   gofmt        (ships with the Go toolchain)
+        --   rustfmt      (rustup component)
+        --   fish_indent  (part of the fish shell)
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
+      -- NOTE: mason-lspconfig v2 dropped the `handlers` table and the
+      -- `automatic_installation` option entirely. `automatic_enable` now does
+      -- the work: every server Mason has installed is passed to
+      -- `vim.lsp.enable()` for us, picking up both the `vim.lsp.config('*')`
+      -- defaults above and the per-server overrides applied below.
       require('mason-lspconfig').setup {
         ensure_installed = {},
-        automatic_installation = true,
-        handlers = {
-          function(server_name)
-            local server = servers[server_name] or {}
-            -- This handles overriding only values explicitly passed
-            -- by the server configuration above. Useful when disabling
-            -- certain features of an LSP (for example, turning off formatting for tsserver)
-            server.capabilities =
-              vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
-            vim.lsp.config(server_name, server)
-          end,
+        -- `automatic_enable` hands every Mason-installed server to
+        -- `vim.lsp.enable()`. That is what restores gopls / rust_analyzer /
+        -- tailwindcss / html / astro etc., which stopped being enabled at all
+        -- when v2 dropped `handlers`.
+        --
+        -- `stylua` is excluded on purpose: nvim-lspconfig ships a `stylua`
+        -- LSP config, and mason installs the stylua *binary* for conform (see
+        -- `ensure_installed` above), so automatic_enable would otherwise
+        -- attach a second Lua formatting client on top of conform's.
+        automatic_enable = {
+          exclude = { 'stylua' },
         },
+        -- automatic_enable = true,
+        -- automatic_installation = true,
+        -- handlers = {
+        --   function(server_name)
+        --     local server = servers[server_name] or {}
+        --     server.capabilities =
+        --       vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
+        --     vim.lsp.config(server_name, server)
+        --   end,
+        -- },
       }
 
+      -- Apply our overrides on top of the config nvim-lspconfig ships, then
+      -- make sure the servers we explicitly care about are enabled even if
+      -- Mason did not install them (e.g. a system-wide `clangd`).
       for name, server in pairs(servers) do
         vim.lsp.config(name, server)
         vim.lsp.enable(name)
       end
 
-      vim.lsp.config('gdscript', { capabilities = capabilities, settings = {} })
+      -- [[ Servers Mason does not manage ]]
+      -- nvim-lspconfig ships configs for all three, so enabling them by name is
+      -- enough: Neovim starts them on the matching filetype and reuses one
+      -- client per project root.
+      --
+      -- `gdscript` connects to a running Godot editor over TCP -- see
+      -- `lua/platform.lua`, which starts the matching `server.pipe`.
+      vim.lsp.enable 'gdscript'
+      -- vim.lsp.config('gdscript', { capabilities = capabilities, settings = {} })
 
       if jit.os ~= 'Windows' then
-        -- Hyprlang LSP
-        vim.api.nvim_create_autocmd({ 'BufEnter', 'BufWinEnter' }, {
-          pattern = { '.*/hypr/.*%.conf', '*.hl', 'hypr*.conf' },
-          callback = function(event)
-            vim.lsp.start {
-              name = 'hyprlang',
-              cmd = { 'hyprls' },
-              root_dir = vim.fn.getcwd(),
-            }
-          end,
-        })
-        -- Fish LSP
-        vim.api.nvim_create_autocmd({ 'BufEnter', 'BufWinEnter' }, {
-          pattern = { '.*/fish/.*%.sh', '*.fish' },
-          callback = function(event)
-            vim.lsp.start {
-              name = 'fish-lsp',
-              cmd = { 'fish-lsp', 'start' },
-              filetypes = { 'fish' },
-              root_dir = vim.fn.getcwd(),
-            }
-          end,
-        })
+        -- Hyprland and fish. Previously these were hand-rolled `vim.lsp.start`
+        -- calls inside BufEnter autocommands; the shipped configs already carry
+        -- the right `cmd`, `filetypes` and `root_markers` (and pass `--stdio`
+        -- to hyprls, which the old inline `cmd` omitted).
+        if vim.fn.executable 'hyprls' == 1 then
+          vim.lsp.enable 'hyprls'
+        end
+        if vim.fn.executable 'fish-lsp' == 1 then
+          vim.lsp.enable 'fish_lsp'
+        end
+
+        -- vim.api.nvim_create_autocmd({ 'BufEnter', 'BufWinEnter' }, {
+        --   pattern = { '.*/hypr/.*%.conf', '*.hl', 'hypr*.conf' },
+        --   callback = function(event)
+        --     vim.lsp.start {
+        --       name = 'hyprlang',
+        --       cmd = { 'hyprls' },
+        --       root_dir = vim.fn.getcwd(),
+        --     }
+        --   end,
+        -- })
+        -- vim.api.nvim_create_autocmd({ 'BufEnter', 'BufWinEnter' }, {
+        --   pattern = { '.*/fish/.*%.sh', '*.fish' },
+        --   callback = function(event)
+        --     vim.lsp.start {
+        --       name = 'fish-lsp',
+        --       cmd = { 'fish-lsp', 'start' },
+        --       filetypes = { 'fish' },
+        --       root_dir = vim.fn.getcwd(),
+        --     }
+        --   end,
+        -- })
       end
     end,
   },

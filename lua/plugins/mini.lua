@@ -1,5 +1,10 @@
+---@module 'lazy'
+---@type LazySpec
 return { -- Collection of various small independent plugins/modules
   'echasnovski/mini.nvim',
+  -- Nothing here is needed before the first screen is drawn; mini.statusline
+  -- renders as soon as it loads.
+  event = 'VeryLazy',
   config = function()
     -- Better Around/Inside textobjects
     --

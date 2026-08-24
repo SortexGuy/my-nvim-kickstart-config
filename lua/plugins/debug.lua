@@ -2,12 +2,17 @@
 ---@type LazySpec
 return {
   'mfussenegger/nvim-dap',
+  -- Only needed once you actually start debugging.
+  cmd = { 'DapContinue', 'DapToggleBreakpoint', 'DapNew' },
+  keys = { '<F5>', '<F7>', '<leader>b', '<leader>B' },
   dependencies = {
     'rcarriga/nvim-dap-ui',
     'nvim-neotest/nvim-nio',
 
     -- Installs the debug adapters for you
-    'williamboman/mason.nvim',
+    -- (`williamboman/mason.nvim` moved to the `mason-org` org in v2.)
+    'mason-org/mason.nvim',
+    -- 'williamboman/mason.nvim',
     'jay-babu/mason-nvim-dap.nvim',
 
     -- Add your own debuggers here

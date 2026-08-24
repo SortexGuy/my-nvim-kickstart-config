@@ -34,24 +34,50 @@ return { -- Autoformat
         lsp_format = lsp_format_opt,
       }
     end,
+    -- NOTE on list semantics: a plain list runs *every* formatter in it, in
+    -- order. To mean "the first one that is installed", add
+    -- `stop_after_first = true` -- which is what the prettierd/prettier pairs
+    -- below actually want. `go` deliberately keeps both: goimports fixes the
+    -- import block, gofmt formats the rest.
     formatters_by_ft = {
       c = { 'clang-format' },
       cpp = { 'clang-format' },
-      cmake = { 'cmake-format' },
+      -- Conform's formatter is named `cmake_format`; `cmake-format` (with a
+      -- dash) matched nothing and made every CMake save fail.
+      cmake = { 'cmake_format' },
+      -- cmake = { 'cmake-format' },
       go = { 'goimports', 'gofmt' },
       bash = { 'shfmt' },
-      lua = { 'lua_ls', 'stylua' },
+      sh = { 'shfmt' },
+      -- `lua_ls` is a language server, not a conform formatter -- listing it
+      -- here just produced an "unknown formatter" error on every Lua save.
+      -- LSP formatting is already handled by `lsp_format = 'fallback'` above.
+      lua = { 'stylua' },
+      -- lua = { 'lua_ls', 'stylua' },
       rust = { 'rustfmt', lsp_format = 'fallback' },
       fish = { 'fish_indent' },
-      text = { 'spellcheck' },
-      javascript = { 'prettierd', 'prettier' },
-      javascriptreact = { 'prettierd', 'prettier' },
-      typescript = { 'prettierd', 'prettier' },
-      typescriptreact = { 'prettierd', 'prettier' },
+      -- `spellcheck` is not a conform formatter either; codespell (below)
+      -- already covers this for every filetype.
+      -- text = { 'spellcheck' },
+      javascript = { 'prettierd', 'prettier', stop_after_first = true },
+      javascriptreact = { 'prettierd', 'prettier', stop_after_first = true },
+      typescript = { 'prettierd', 'prettier', stop_after_first = true },
+      typescriptreact = { 'prettierd', 'prettier', stop_after_first = true },
+      json = { 'prettierd', 'prettier', stop_after_first = true },
+      jsonc = { 'prettierd', 'prettier', stop_after_first = true },
+      css = { 'prettierd', 'prettier', stop_after_first = true },
+      html = { 'prettierd', 'prettier', stop_after_first = true },
+      yaml = { 'prettierd', 'prettier', stop_after_first = true },
+      markdown = { 'prettierd', 'prettier', stop_after_first = true },
       haskell = { 'fourmolu' },
       sql = { 'sqlfmt' },
       -- Use the "*" filetype to run formatters on all filetypes.
-      ['*'] = { 'codespell' },
+      -- codespell is installed by Mason (see lsp-config.lua), but the entry
+      -- stays gated on the binary existing: before Mason's first install
+      -- finishes an unconditional entry makes *every* buffer report a
+      -- formatting error on save (`notify_on_error` is on).
+      ['*'] = vim.fn.executable 'codespell' == 1 and { 'codespell' } or {},
+      -- ['*'] = { 'codespell' },
       -- Use the "_" filetype to run formatters on filetypes that don't
       -- have other formatters configured.
       ['_'] = { 'trim_whitespace' },

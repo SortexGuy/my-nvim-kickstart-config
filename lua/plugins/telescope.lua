@@ -35,6 +35,16 @@ return { -- Fuzzy Finder (files, lsp, etc)
         layout_config = {
           vertical = { width = 0.8, height = 0.9 },
         },
+        -- NOTE: this block used to sit at the top level of the setup table,
+        -- where telescope ignores it -- insert-mode `<C-u>`/`<C-d>` were still
+        -- scrolling the preview instead of being freed up. Keymap overrides
+        -- belong under `defaults.mappings`.
+        mappings = {
+          i = {
+            ['<C-u>'] = false,
+            ['<C-d>'] = false,
+          },
+        },
       },
       pickers = {
         buffers = {
@@ -49,12 +59,6 @@ return { -- Fuzzy Finder (files, lsp, etc)
               ['d'] = 'delete_buffer',
             },
           },
-        },
-      },
-      mappings = {
-        i = {
-          ['<C-u>'] = false,
-          ['<C-d>'] = false,
         },
       },
       extensions = {

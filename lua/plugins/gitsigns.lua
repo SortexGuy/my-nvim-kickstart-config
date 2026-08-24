@@ -1,6 +1,15 @@
+-- Adds git related signs to the gutter, as well as utilities for managing changes
+--
+-- NOTE: several gitsigns actions used here were deprecated upstream:
+--   `next_hunk()` / `prev_hunk()` -> `nav_hunk('next'|'prev')`
+--   `undo_stage_hunk()`           -> `stage_hunk()` again on a staged hunk (it toggles)
+--   `toggle_deleted()`            -> `preview_hunk_inline()`
+-- The replacements are used below; the originals are kept commented next to them.
+---@module 'lazy'
+---@type LazySpec
 return {
-  -- Adds git related signs to the gutter, as well as utilities for managing changes
   'lewis6991/gitsigns.nvim',
+  event = { 'BufReadPre', 'BufNewFile' },
   opts = {
     signs = {
       add = { text = '+' },
@@ -10,7 +19,8 @@ return {
       changedelete = { text = '*' },
     },
     on_attach = function(bufnr)
-      local gs = package.loaded.gitsigns
+      local gs = require 'gitsigns'
+      -- local gs = package.loaded.gitsigns
 
       local function map(mode, l, r, opts)
         opts = opts or {}
@@ -24,7 +34,8 @@ return {
           return ']c'
         end
         vim.schedule(function()
-          gs.next_hunk()
+          gs.nav_hunk 'next'
+          -- gs.next_hunk()
         end)
         return '<Ignore>'
       end, { expr = true, desc = 'Jump to next hunk' })
@@ -34,7 +45,8 @@ return {
           return '[c'
         end
         vim.schedule(function()
-          gs.prev_hunk()
+          gs.nav_hunk 'prev'
+          -- gs.prev_hunk()
         end)
         return '<Ignore>'
       end, { expr = true, desc = 'Jump to previous hunk' })
@@ -51,7 +63,10 @@ return {
       map('n', '<leader>hs', gs.stage_hunk, { desc = 'git stage hunk' })
       map('n', '<leader>hr', gs.reset_hunk, { desc = 'git reset hunk' })
       map('n', '<leader>hS', gs.stage_buffer, { desc = 'git Stage buffer' })
-      map('n', '<leader>hu', gs.undo_stage_hunk, { desc = 'undo stage hunk' })
+      -- `stage_hunk` on an already-staged hunk unstages it, which is what the
+      -- old `undo_stage_hunk` did.
+      map('n', '<leader>hu', gs.stage_hunk, { desc = 'undo stage hunk' })
+      -- map('n', '<leader>hu', gs.undo_stage_hunk, { desc = 'undo stage hunk' })
       map('n', '<leader>hR', gs.reset_buffer, { desc = 'git Reset buffer' })
       map('n', '<leader>hp', gs.preview_hunk, { desc = 'preview git hunk' })
       map('n', '<leader>hb', function()
@@ -69,7 +84,8 @@ return {
         gs.toggle_current_line_blame,
         { desc = 'toggle git blame line' }
       )
-      map('n', '<leader>td', gs.toggle_deleted, { desc = 'toggle git show deleted' })
+      map('n', '<leader>td', gs.preview_hunk_inline, { desc = 'toggle git show deleted' })
+      -- map('n', '<leader>td', gs.toggle_deleted, { desc = 'toggle git show deleted' })
 
       -- Text object
       map(

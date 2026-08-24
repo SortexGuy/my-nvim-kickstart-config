@@ -2,6 +2,11 @@
 ---@type LazySpec
 return {
   'kevinhwang91/nvim-ufo',
+  -- ufo owns 'foldmethod'/'foldexpr' for the whole config -- `treesitter.lua`
+  -- deliberately does not set a treesitter foldexpr so the two don't fight.
+  -- The LSP folding-range capability ufo needs is declared in
+  -- `lsp-config.lua` via `vim.lsp.config('*', ...)`.
+  event = { 'BufReadPost', 'BufNewFile' },
   dependencies = { 'kevinhwang91/promise-async' },
   opts = {
     filetype_exclude = {

@@ -1,6 +1,11 @@
+---@module 'lazy'
+---@type LazySpec
 return {
   'stevearc/oil.nvim',
   -- enabled = false,
+  -- Must load eagerly: oil replaces netrw as the directory handler, so it has
+  -- to be in place before Neovim opens a directory argument (`nvim .`).
+  lazy = false,
   opts = {
     default_file_explorer = true,
     columns = {
@@ -68,9 +73,14 @@ return {
       update_on_cursor_moved = true,
     },
   },
+  keys = {
+    { '-', '<cmd>Oil<cr>', desc = 'Open parent directory' },
+  },
   config = function(_, opts)
     require('oil').setup(opts)
-    vim.keymap.set('n', '-', '<CMD>Oil<CR>', { desc = 'Open parent directory' })
+    -- Let netrw's helper commands (`gx` and friends) work again after oil has
+    -- claimed the directory-browsing role. See the note in `init.lua` about
+    -- why `netrwPlugin` is not in lazy's `disabled_plugins`.
     vim.g.loaded_netrw = nil
   end,
   dependencies = { 'nvim-tree/nvim-web-devicons' },

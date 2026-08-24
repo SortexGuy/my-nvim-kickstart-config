@@ -1,48 +1,80 @@
+-- Quick marks for the handful of files you are actually working in.
+--
+-- The keymaps used to be created inside `config`, which meant harpoon loaded on
+-- every startup. Declaring them as `keys` defers loading until first use;
+-- `harpoon:setup()` still runs before the mapping fires.
+---@module 'lazy'
+---@type LazySpec
 return {
   'ThePrimeagen/harpoon',
   name = 'harpoon',
   branch = 'harpoon2',
-  config = function()
-    local harpoon = require 'harpoon'
-    -- REQUIRED
-    harpoon:setup()
-    -- REQUIRED
-    local function nmap(map, func, desc)
-      vim.keymap.set('n', map, func, { desc = desc })
-    end
-
-    -- nmap("<leader>mf", function() harpoon:list():append() end, 'Harpoon: Mark file')
-    nmap('<A-f>', function()
-      harpoon:list():add()
-    end, 'Harpoon: Mark file')
-    nmap('<A-m>', function()
-      harpoon.ui:toggle_quick_menu(harpoon:list())
-    end, 'Harpoon: Quick menu')
-
-    nmap('<A-h>', function()
-      harpoon:list():select(1)
-    end, 'Harpoon: Go to mark 1')
-    nmap('<A-u>', function()
-      harpoon:list():select(2)
-    end, 'Harpoon: Go to mark 2')
-    nmap('<A-i>', function()
-      harpoon:list():select(3)
-    end, 'Harpoon: Go to mark 3')
-    nmap('<A-o>', function()
-      harpoon:list():select(4)
-    end, 'Harpoon: Go to mark 4')
-
-    -- Toggle previous & next buffers stored within Harpoon list
-    nmap('<A-p>', function()
-      harpoon:list():prev()
-    end, 'Harpoon: Go to next mark')
-    nmap('<A-n>', function()
-      harpoon:list():next()
-    end, 'Harpoon: Go to prev mark')
-
-    -- Not harpooned but also good
-    nmap('<A-t>', function()
-      vim.cmd 'term'
-    end, 'Harpoon: Go to prev mark')
+  dependencies = { 'nvim-lua/plenary.nvim' },
+  opts = {},
+  keys = {
+    {
+      '<A-f>',
+      function()
+        require('harpoon'):list():add()
+      end,
+      desc = 'Harpoon: Mark file',
+    },
+    {
+      '<A-m>',
+      function()
+        local harpoon = require 'harpoon'
+        harpoon.ui:toggle_quick_menu(harpoon:list())
+      end,
+      desc = 'Harpoon: Quick menu',
+    },
+    {
+      '<A-h>',
+      function()
+        require('harpoon'):list():select(1)
+      end,
+      desc = 'Harpoon: Go to mark 1',
+    },
+    {
+      '<A-u>',
+      function()
+        require('harpoon'):list():select(2)
+      end,
+      desc = 'Harpoon: Go to mark 2',
+    },
+    {
+      '<A-i>',
+      function()
+        require('harpoon'):list():select(3)
+      end,
+      desc = 'Harpoon: Go to mark 3',
+    },
+    {
+      '<A-o>',
+      function()
+        require('harpoon'):list():select(4)
+      end,
+      desc = 'Harpoon: Go to mark 4',
+    },
+    {
+      '<A-p>',
+      function()
+        require('harpoon'):list():prev()
+      end,
+      desc = 'Harpoon: Go to previous mark',
+    },
+    {
+      '<A-n>',
+      function()
+        require('harpoon'):list():next()
+      end,
+      desc = 'Harpoon: Go to next mark',
+    },
+  },
+  config = function(_, opts)
+    require('harpoon'):setup(opts)
   end,
 }
+
+-- NOTE: this file also used to define `<A-t>` ("open a terminal"), which has
+-- nothing to do with harpoon and was unreachable until harpoon loaded. It now
+-- lives in `lua/keybinds.lua` with the other core maps.
