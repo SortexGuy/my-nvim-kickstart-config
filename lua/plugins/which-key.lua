@@ -26,6 +26,9 @@ return {
       { '<leader>g_', hidden = true },
       { '<leader>h', group = 'Git [H]unk' },
       { '<leader>h_', hidden = true },
+      -- nvim-jdtls: buffer-local, only bound in Java buffers
+      { '<leader>j', group = '[J]ava (jdtls)' },
+      { '<leader>j_', hidden = true },
       { '<leader>r', group = '[R]ename' },
       { '<leader>r_', hidden = true },
       { '<leader>s', group = '[S]earch' },

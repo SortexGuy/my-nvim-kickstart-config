@@ -359,6 +359,11 @@ return {
         'shfmt',
         'fourmolu',
         'sqlfmt',
+        -- Java: the JDT bundles nvim-jdtls loads (see `jdtls.lua`). The
+        -- language server itself (`jdtls`) is installed by Mason too, but is
+        -- deliberately kept out of `automatic_enable` below.
+        'java-debug-adapter',
+        'java-test',
         -- Not Mason-installable on purpose:
         --   gofmt        (ships with the Go toolchain)
         --   rustfmt      (rustup component)
@@ -382,8 +387,13 @@ return {
         -- LSP config, and mason installs the stylua *binary* for conform (see
         -- `ensure_installed` above), so automatic_enable would otherwise
         -- attach a second Lua formatting client on top of conform's.
+        --
+        -- `jdtls` is excluded for a different reason: nvim-jdtls starts it
+        -- itself, per project root and with its own `-data` workspace (see
+        -- `lua/plugins/jdtls.lua`). Letting `vim.lsp.enable` start it as well
+        -- would put two eclipse.jdt.ls clients on every Java buffer.
         automatic_enable = {
-          exclude = { 'stylua' },
+          exclude = { 'stylua', 'jdtls' },
         },
         -- automatic_enable = true,
         -- automatic_installation = true,

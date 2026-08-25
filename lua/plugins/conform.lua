@@ -70,6 +70,13 @@ return { -- Autoformat
       yaml = { 'prettierd', 'prettier', stop_after_first = true },
       markdown = { 'prettierd', 'prettier', stop_after_first = true },
       haskell = { 'fourmolu' },
+      -- No java entry, so `lsp_format = 'fallback'` hands format-on-save to
+      -- jdtls, which formats to Eclipse defaults. On a project that is also
+      -- opened in IntelliJ that produces a reformat war over shared files --
+      -- uncomment this to leave Java files alone, or point jdtls at an
+      -- exported Eclipse formatter profile (see `java.format.settings.url`
+      -- in `lua/plugins/jdtls.lua`).
+      java = { lsp_format = 'never' },
       sql = { 'sqlfmt' },
       -- Use the "*" filetype to run formatters on all filetypes.
       -- codespell is installed by Mason (see lsp-config.lua), but the entry
