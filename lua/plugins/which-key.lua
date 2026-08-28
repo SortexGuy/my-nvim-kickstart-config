@@ -29,6 +29,9 @@ return {
       -- nvim-jdtls: buffer-local, only bound in Java buffers
       { '<leader>j', group = '[J]ava (jdtls)' },
       { '<leader>j_', hidden = true },
+      -- cmake-tools.nvim: buffer-local, only bound in c/cpp/cmake buffers
+      { '<leader>m', group = 'C[M]ake' },
+      { '<leader>m_', hidden = true },
       { '<leader>r', group = '[R]ename' },
       { '<leader>r_', hidden = true },
       { '<leader>s', group = '[S]earch' },
