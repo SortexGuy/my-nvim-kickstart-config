@@ -29,6 +29,9 @@ return {
       -- nvim-jdtls: buffer-local, only bound in Java buffers
       { '<leader>j', group = '[J]ava (jdtls)' },
       { '<leader>j_', hidden = true },
+      -- luau-lsp.nvim: buffer-local, only bound in Luau buffers
+      { '<leader>l', group = '[L]uau (Roblox)' },
+      { '<leader>l_', hidden = true },
       -- cmake-tools.nvim: buffer-local, only bound in c/cpp/cmake buffers
       { '<leader>m', group = 'C[M]ake' },
       { '<leader>m_', hidden = true },

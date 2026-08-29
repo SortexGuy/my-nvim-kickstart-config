@@ -157,15 +157,24 @@ return {
       -- to each server" dance. blink.cmp registers its own completion
       -- capabilities the same way from its `plugin/` file, and both merge.
       --
-      -- The only thing we have to add here is the folding range capability
-      -- that nvim-ufo needs -- without it ufo silently falls back to indent
-      -- folds.
+      -- Two things have to be added here:
+      --   * the folding range capability nvim-ufo needs -- without it ufo
+      --     silently falls back to indent folds;
+      --   * dynamic registration of `didChangeWatchedFiles`, which luau-lsp
+      --     uses to notice that Rojo rewrote `sourcemap.json` (see
+      --     `lua/plugins/luau.lua`). Without it the server keeps serving the
+      --     DataModel tree it read at startup.
       vim.lsp.config('*', {
         capabilities = {
           textDocument = {
             foldingRange = {
               dynamicRegistration = false,
               lineFoldingOnly = true,
+            },
+          },
+          workspace = {
+            didChangeWatchedFiles = {
+              dynamicRegistration = true,
             },
           },
         },
@@ -364,6 +373,11 @@ return {
         -- deliberately kept out of `automatic_enable` below.
         'java-debug-adapter',
         'java-test',
+        -- Luau: the server binary luau-lsp.nvim drives. It is deliberately not
+        -- in the `servers` table above, because everything in that table also
+        -- gets `vim.lsp.enable`d -- which is exactly what luau-lsp.nvim
+        -- forbids. See `lua/plugins/luau.lua`.
+        'luau-lsp',
         -- Not Mason-installable on purpose:
         --   gofmt        (ships with the Go toolchain)
         --   rustfmt      (rustup component)
@@ -392,8 +406,15 @@ return {
         -- itself, per project root and with its own `-data` workspace (see
         -- `lua/plugins/jdtls.lua`). Letting `vim.lsp.enable` start it as well
         -- would put two eclipse.jdt.ls clients on every Java buffer.
+        --
+        -- `luau_lsp` is the same story: luau-lsp.nvim registers and starts its
+        -- own client (under the name `luau-lsp`, with the Roblox type dumps
+        -- and sourcemap arguments it computes). Letting mason-lspconfig enable
+        -- nvim-lspconfig's plain `luau_lsp` config alongside it attaches a
+        -- second, Roblox-blind client to every `.luau` buffer -- see
+        -- `lua/plugins/luau.lua`.
         automatic_enable = {
-          exclude = { 'stylua', 'jdtls' },
+          exclude = { 'stylua', 'jdtls', 'luau_lsp' },
         },
         -- automatic_enable = true,
         -- automatic_installation = true,

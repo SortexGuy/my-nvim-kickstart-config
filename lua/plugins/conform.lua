@@ -54,6 +54,10 @@ return { -- Autoformat
       -- LSP formatting is already handled by `lsp_format = 'fallback'` above.
       lua = { 'stylua' },
       -- lua = { 'lua_ls', 'stylua' },
+      -- stylua parses Luau (type annotations, string interpolation, compound
+      -- assignment) when the file has a `.luau` extension, so the same binary
+      -- covers both. luau-lsp itself provides no formatting.
+      luau = { 'stylua' },
       rust = { 'rustfmt', lsp_format = 'fallback' },
       fish = { 'fish_indent' },
       -- `spellcheck` is not a conform formatter either; codespell (below)

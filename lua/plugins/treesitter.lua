@@ -46,6 +46,9 @@ return {
         'gdscript',
         'godot_resource',
         'gdshader',
+        -- Roblox / Luau (see `lua/plugins/luau.lua`). Neovim detects the
+        -- `luau` filetype itself, but ships no parser for it.
+        'luau',
         -- Filetypes this config has dedicated tooling for:
         'javascript',
         'typescript',
